@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
     private static ArrayList<Kierowca> listaKierowcow = new ArrayList<Kierowca>();
-    private static ArrayList<String> listaTorow = new ArrayList<String>();
+    private static ArrayList<Tor> listaTorow = new ArrayList<Tor>();
     public static void main(String[] args){
         wczytajDane();
         for(int nrWyscigu=1; nrWyscigu<=listaTorow.size(); nrWyscigu++)
@@ -18,7 +18,7 @@ public class Main {
         pokazWyniki();
         zapiszWyniki();
     }
-    private static void uruchomWyscig(String tor){
+    private static void uruchomWyscig(Tor tor){
         for(int okrazenie=0; okrazenie<liczbaOkrazenNaTor; okrazenie++)
         {
             for(int i=0; i<listaKierowcow.size();i++)
