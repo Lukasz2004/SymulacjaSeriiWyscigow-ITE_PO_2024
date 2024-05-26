@@ -1,6 +1,7 @@
 import java.util.Random;
 
 public class Tor {
+    public String nazwa;
     public double dlugosc;
     public double procentProstych;
     public double procentZakretow;
@@ -15,7 +16,9 @@ public class Tor {
             return false;
     }
 
-    public Tor(double dlugosc, double procentProstych, double procentZakretow, double szansaNaDeszcz) {
+
+    public Tor(String nazwa, double dlugosc, double procentProstych, double procentZakretow, double szansaNaDeszcz) {
+        this.nazwa = nazwa;
         this.dlugosc = dlugosc;
         this.procentProstych = procentProstych;
         this.procentZakretow = procentZakretow;
