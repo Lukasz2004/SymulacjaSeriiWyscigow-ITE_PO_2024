@@ -5,7 +5,7 @@ Program przeprowadzi symulacje kilku wyścigów samochodowych, jeden po drugim, 
 
 
 
-
+Programowanie Obiektowe - ITE - Semestr letni 2023/2024
 
 ## Autorzy
 
