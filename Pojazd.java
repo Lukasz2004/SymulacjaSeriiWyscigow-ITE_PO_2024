@@ -14,5 +14,6 @@ public class Pojazd {
         this.przyczepnosc = przyczepnosc;
         this.stanPaliwa = 1;
         this.stanOpon = 1;
+
     }
 }
