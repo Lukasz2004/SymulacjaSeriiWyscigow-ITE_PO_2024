@@ -10,6 +10,6 @@ Programowanie Obiektowe - ITE - Semestr letni 2023/2024
 ## Autorzy
 
 - Łukasz Czerwiński - Lider grupy
-- Kamil Jasnyk
+- Kamil Jasyk
 
 
