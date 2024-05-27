@@ -4,11 +4,11 @@ import java.util.*;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
-    private static ArrayList<Kierowca> listaKierowcow = new ArrayList<Kierowca>();
-    private static ArrayList<Tor> listaTorow = new ArrayList<Tor>();
-    private static ArrayList<Druzyna> listaDruzyn = new ArrayList<Druzyna>();
-    private static ArrayList<Pojazd> listaPojazdow = new ArrayList<Pojazd>();
-    private static ArrayList<Mechanik> listaMechanikow = new ArrayList<Mechanik>();
+    private static ArrayList<Kierowca> listaKierowcow = new ArrayList<>();
+    private static ArrayList<Tor> listaTorow = new ArrayList<>();
+    private static ArrayList<Druzyna> listaDruzyn = new ArrayList<>();
+    private static ArrayList<Pojazd> listaPojazdow = new ArrayList<>();
+    private static ArrayList<Mechanik> listaMechanikow = new ArrayList<>();
     public static void main(String[] args){
         wczytajDane();
 
@@ -51,6 +51,8 @@ public class Main {
     {
         kierowca.czyWPitstopie=false;
         double czasPrzejazdu = (kierowca.predkoscProsta*kierowca.pojazd.szybkosc/tor.procentProstych) + (kierowca.predkoscZakret*kierowca.pojazd.przyczepnosc/tor.procentZakretow);
+        Random randTime = new Random();
+        czasPrzejazdu+=randTime.nextDouble();
         if(tor.czyPada) czasPrzejazdu = czasPrzejazdu*kierowca.adaptacjaPogoda;
         czasPrzejazdu = tor.dlugosc/czasPrzejazdu;
         kierowca.pojazd.stanPaliwa = kierowca.pojazd.stanPaliwa - (czasPrzejazdu/kierowca.ekonomicznoscJazdy);
@@ -62,20 +64,20 @@ public class Main {
         kierowca.czasPrzejazdu = Math.max(kierowca.czasPrzejazdu + czasPrzejazdu, CzasPoprzednika);
     }
     private static double pitstop(Kierowca kierowca){
-    double czasPrzejazdu = 0;
-    Random czas = new Random();
-    if(kierowca.pojazd.stanPaliwa < 12.5)
-    {
-        czasPrzejazdu = czasPrzejazdu +(czas.nextDouble() * kierowca.pojazd.mechanik.szybkosc);
-        kierowca.pojazd.stanPaliwa = 50;
-    }
-    if(kierowca.pojazd.stanOpon < 25)
-    {
-        czasPrzejazdu = czasPrzejazdu +(czas.nextDouble() * kierowca.pojazd.mechanik.szybkosc);
-        kierowca.pojazd.stanOpon = 100;
-    }
-    System.out.println(kierowca.imie +  " zjezdza na PITSTOP ");
-    return czasPrzejazdu;
+        double czasPitstopu = 0;
+        Random czas = new Random();
+        if(kierowca.pojazd.stanPaliwa < 12.5)
+        {
+            czasPitstopu += (czas.nextDouble() * kierowca.pojazd.mechanik.szybkosc);
+            kierowca.pojazd.stanPaliwa = 50;
+        }
+        if(kierowca.pojazd.stanOpon < 25)
+        {
+            czasPitstopu += (czas.nextDouble() * kierowca.pojazd.mechanik.szybkosc);
+            kierowca.pojazd.stanOpon = 100;
+        }
+        System.out.println(kierowca.imie +  " zjezdza na PITSTOP ");
+        return czasPitstopu;
     }
 
     private static void wyprzedzanie(int pozKierowcy)
@@ -89,9 +91,8 @@ public class Main {
             if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble())>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble())|| kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
             {
                 kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
-                Kierowca tempKierowca = kierowca1;
                 listaKierowcow.set(pozKierowcy-1,kierowca2);
-                listaKierowcow.set(pozKierowcy, tempKierowca);
+                listaKierowcow.set(pozKierowcy, kierowca1);
 
                 System.out.println(kierowca2.imie + " WYPRZEDZIŁ " + kierowca1.imie);
             }

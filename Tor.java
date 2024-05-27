@@ -11,8 +11,10 @@ public class Tor {
 
     public boolean warunkiPogodowe(){
         Random deszcz = new Random();
-        if(deszcz.nextDouble() < szansaNaDeszcz)
+        if (deszcz.nextDouble() < szansaNaDeszcz) {
+            System.out.println("Bedzie dzis padac");
             return true;
+        }
         else
             return false;
     }
