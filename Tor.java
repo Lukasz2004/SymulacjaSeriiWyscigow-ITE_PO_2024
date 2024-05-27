@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Random;
 
 public class Tor {
@@ -23,6 +24,14 @@ public class Tor {
         this.procentProstych = procentProstych;
         this.procentZakretow = procentZakretow;
         this.szansaNaDeszcz = szansaNaDeszcz;
+        this.czyPada = warunkiPogodowe();
+    }
+    public Tor(List<String> dane) {
+        this.nazwa = dane.get(0);
+        this.dlugosc = Double.parseDouble(dane.get(1));
+        this.procentProstych = Double.parseDouble(dane.get(2));
+        this.procentZakretow = Double.parseDouble(dane.get(3));
+        this.szansaNaDeszcz = Double.parseDouble(dane.get(4));
         this.czyPada = warunkiPogodowe();
     }
 }

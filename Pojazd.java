@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Pojazd {
     public String nazwa;
     public Mechanik mechanik;
@@ -12,6 +14,16 @@ public class Pojazd {
         this.mechanik = mechanik;
         this.szybkosc = szybkosc;
         this.przyczepnosc = przyczepnosc;
+        this.stanPaliwa = 50;
+        this.stanOpon = 100;
+
+    }
+    public Pojazd (Mechanik mechanik, List<String> dane)
+    {
+        this.nazwa = dane.get(0);
+        this.mechanik = mechanik;
+        this.szybkosc = Double.parseDouble(dane.get(2));
+        this.przyczepnosc = Double.parseDouble(dane.get(3));
         this.stanPaliwa = 50;
         this.stanOpon = 100;
 
