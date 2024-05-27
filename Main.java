@@ -82,24 +82,24 @@ public class Main {
         Kierowca kierowca2 = listaKierowcow.get(pozKierowcy);
         Random wyprzedzanie = new Random();
 
-        if(kierowca1.czasPrzejazdu-kierowca2.czasPrzejazdu<0.5 && kierowca1.czasPrzejazdu-kierowca2.czasPrzejazdu>0)
+        if(kierowca1.czasPrzejazdu-kierowca2.czasPrzejazdu<0.25 && kierowca1.czasPrzejazdu-kierowca2.czasPrzejazdu>0)
         {
             System.out.println(kierowca1.imie+" zaczyna wyprzedzac ");
             if((kierowca1.umiejetnoscWyprzedania*kierowca1.agresywnosc*wyprzedzanie.nextDouble())>(kierowca2.umiejetnoscObrony*kierowca2.agresywnosc*wyprzedzanie.nextDouble()))
             {
-                kierowca1.czasPrzejazdu = kierowca1.czasPrzejazdu - 0.5;
-                kierowca2.czasPrzejazdu = kierowca2.czasPrzejazdu + 0.5;
+                kierowca1.czasPrzejazdu = kierowca1.czasPrzejazdu - 0.25;
+                kierowca2.czasPrzejazdu = kierowca2.czasPrzejazdu + 0.25;
 
                 System.out.println(kierowca1.imie + " WYPRZEDZIŁ " + kierowca2.imie);
             }
         }
-        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.5 && kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu>0)
+        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25 && kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu>0)
         {
             System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
             if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble())>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc* wyprzedzanie.nextDouble()))
             {
-                kierowca2.czasPrzejazdu = kierowca2.czasPrzejazdu - 0.5;
-                kierowca1.czasPrzejazdu = kierowca1.czasPrzejazdu + 0.5;
+                kierowca2.czasPrzejazdu = kierowca2.czasPrzejazdu - 0.25;
+                kierowca1.czasPrzejazdu = kierowca1.czasPrzejazdu + 0.25;
 
                 System.out.println(kierowca2.imie + " WYPRZEDZIŁ " + kierowca1.imie);
             }
