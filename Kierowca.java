@@ -7,8 +7,8 @@ public class Kierowca extends Personel {
     public double agresywnosc;
     public double adaptacjaPogoda;
     public double ekonomicznoscJazdy;
-    public double odlegloscOdPoprzednika;
     public double czasPrzejazdu;
+    public boolean czyWPitstopie;
 
     public Kierowca(Druzyna druzyna,String imie, String nazwisko, String narodowosc, int wiek, Pojazd pojazd,double predkoscProsta, double predkoscZakret, double umiejetnoscWyprzedania, double umiejetnoscObrony, double agresywnosc, double adaptacjaPogoda, double ekonomicznoscJazdy) {
         this.druzyna = druzyna;

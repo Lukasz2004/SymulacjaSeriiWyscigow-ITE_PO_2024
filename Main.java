@@ -17,7 +17,6 @@ public class Main {
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
             zapiszWyniki();
         }
-        pokazWyniki();
         zapiszWyniki();
 
     }
@@ -27,37 +26,40 @@ public class Main {
         System.out.println("START !!!");
         for(int okrazenie=1; okrazenie<=liczbaOkrazenNaTor; okrazenie++)
         {
-            System.out.println("OKRĄŻENIE: " + okrazenie);
+            System.out.println("\nOKRĄŻENIE: " + okrazenie);
             for(int i=0; i<listaKierowcow.size();i++)
             {
-                przejazdKierowcy(listaKierowcow.get(i), tor);
+                if(i==0)
+                {
+                    przejazdKierowcy(listaKierowcow.get(i), tor, 0.0);
+                }
+                else {
+                    przejazdKierowcy(listaKierowcow.get(i), tor, listaKierowcow.get(i-1).czasPrzejazdu);
+                }
             }
 
             for(int i=1; i<listaKierowcow.size();i++)
             {
                 wyprzedzanie(i);
             }
-
+            pokazWyniki();
 
         }
         System.out.println("META !!!");
     }
-    private static void przejazdKierowcy(Kierowca kierowca, Tor tor)
+    private static void przejazdKierowcy(Kierowca kierowca, Tor tor, Double CzasPoprzednika)
     {
+        kierowca.czyWPitstopie=false;
         double czasPrzejazdu = (kierowca.predkoscProsta*kierowca.pojazd.szybkosc/tor.procentProstych) + (kierowca.predkoscZakret*kierowca.pojazd.przyczepnosc/tor.procentZakretow);
         if(tor.czyPada) czasPrzejazdu = czasPrzejazdu*kierowca.adaptacjaPogoda;
         czasPrzejazdu = tor.dlugosc/czasPrzejazdu;
         kierowca.pojazd.stanPaliwa = kierowca.pojazd.stanPaliwa - (czasPrzejazdu/kierowca.ekonomicznoscJazdy);
         kierowca.pojazd.stanOpon = kierowca.pojazd.stanOpon -(czasPrzejazdu/kierowca.ekonomicznoscJazdy*kierowca.pojazd.przyczepnosc);
-        if(kierowca.pojazd.stanPaliwa < 5 || kierowca.pojazd.stanOpon < 10 )
-        {
-            czasPrzejazdu = czasPrzejazdu + pitstop(kierowca);
+        if(kierowca.pojazd.stanPaliwa < 5 || kierowca.pojazd.stanOpon < 10 ) {
+            kierowca.czyWPitstopie=true;
+            czasPrzejazdu += pitstop(kierowca);
         }
-        kierowca.czasPrzejazdu = kierowca.czasPrzejazdu + czasPrzejazdu;
-
-
-        System.out.print("CZAS: "+kierowca.imie+" "+kierowca.czasPrzejazdu);
-        System.out.println();
+        kierowca.czasPrzejazdu = Math.max(kierowca.czasPrzejazdu + czasPrzejazdu, CzasPoprzednika);
     }
     private static double pitstop(Kierowca kierowca){
     double czasPrzejazdu = 0;
@@ -72,7 +74,7 @@ public class Main {
         czasPrzejazdu = czasPrzejazdu +(czas.nextDouble() * kierowca.pojazd.mechanik.szybkosc);
         kierowca.pojazd.stanOpon = 100;
     }
-    System.out.print("PITSTOP ");
+    System.out.println(kierowca.imie +  " zjezdza na PITSTOP ");
     return czasPrzejazdu;
     }
 
@@ -81,25 +83,15 @@ public class Main {
         Kierowca kierowca1 = listaKierowcow.get(pozKierowcy-1);
         Kierowca kierowca2 = listaKierowcow.get(pozKierowcy);
         Random wyprzedzanie = new Random();
-
-        if(kierowca1.czasPrzejazdu-kierowca2.czasPrzejazdu<0.25 && kierowca1.czasPrzejazdu-kierowca2.czasPrzejazdu>0)
-        {
-            System.out.println(kierowca1.imie+" zaczyna wyprzedzac ");
-            if((kierowca1.umiejetnoscWyprzedania*kierowca1.agresywnosc*wyprzedzanie.nextDouble())>(kierowca2.umiejetnoscObrony*kierowca2.agresywnosc*wyprzedzanie.nextDouble()))
-            {
-                kierowca1.czasPrzejazdu = kierowca1.czasPrzejazdu - 0.25;
-                kierowca2.czasPrzejazdu = kierowca2.czasPrzejazdu + 0.25;
-
-                System.out.println(kierowca1.imie + " WYPRZEDZIŁ " + kierowca2.imie);
-            }
-        }
-        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25 && kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu>0)
+        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25||kierowca1.czyWPitstopie==true&&kierowca2.czyWPitstopie==false)
         {
             System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
-            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble())>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc* wyprzedzanie.nextDouble()))
+            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble())>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble())||kierowca1.czyWPitstopie==true&&kierowca2.czyWPitstopie==false)
             {
-                kierowca2.czasPrzejazdu = kierowca2.czasPrzejazdu - 0.25;
-                kierowca1.czasPrzejazdu = kierowca1.czasPrzejazdu + 0.25;
+                kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
+                Kierowca tempKierowca = kierowca1;
+                listaKierowcow.set(pozKierowcy-1,kierowca2);
+                listaKierowcow.set(pozKierowcy, tempKierowca);
 
                 System.out.println(kierowca2.imie + " WYPRZEDZIŁ " + kierowca1.imie);
             }
@@ -111,7 +103,11 @@ public class Main {
     }
 
     private static void pokazWyniki() {
-
+        for(int i=0; i<listaKierowcow.size();i++)
+        {
+            System.out.print("CZAS: "+listaKierowcow.get(i).imie+" "+listaKierowcow.get(i).czasPrzejazdu);
+            System.out.println();
+        }
     }
 
 
