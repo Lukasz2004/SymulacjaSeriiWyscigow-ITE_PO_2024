@@ -12,8 +12,8 @@ public class Pojazd {
         this.mechanik = mechanik;
         this.szybkosc = szybkosc;
         this.przyczepnosc = przyczepnosc;
-        this.stanPaliwa = 1;
-        this.stanOpon = 1;
+        this.stanPaliwa = 50;
+        this.stanOpon = 100;
 
     }
 }
