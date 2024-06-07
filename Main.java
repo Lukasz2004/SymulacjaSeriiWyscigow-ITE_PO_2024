@@ -1,6 +1,10 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
@@ -9,16 +13,17 @@ public class Main {
     private static ArrayList<Druzyna> listaDruzyn = new ArrayList<>();
     private static ArrayList<Pojazd> listaPojazdow = new ArrayList<>();
     private static ArrayList<Mechanik> listaMechanikow = new ArrayList<>();
+
+    private static ArrayList<Integer> statystykiLiczbaWyprzedzen = new ArrayList<>();
     public static void main(String[] args){
         wczytajDane();
 
         for(int nrWyscigu=1; nrWyscigu<=listaTorow.size(); nrWyscigu++)
         {
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
-            zapiszWyniki();
+            zapiszWyniki(listaKierowcow,"Kierowcy - Wyscig " + nrWyscigu);
         }
-        zapiszWyniki();
-
+        zapiszWyniki(listaKierowcow,"Kierowcy - _Koncowe");
     }
 
     private static void uruchomWyscig(Tor tor){
@@ -99,9 +104,6 @@ public class Main {
         }
 
     }
-    private static void zapiszWyniki() {
-
-    }
 
     private static void pokazWyniki() {
         for (Kierowca kierowca : listaKierowcow) {
@@ -109,7 +111,24 @@ public class Main {
             System.out.println();
         }
     }
-
+    private static void zapiszWyniki(ArrayList <Kierowca> dane, String nazwaPliku) {
+        File plik = new File("Wyniki/"+nazwaPliku+".csv");
+        try (PrintWriter printWriter = new PrintWriter(plik)) {
+            printWriter.println("Imie;Nazwisko;Czas");
+            for(Kierowca i:dane)
+            {
+                String[] danee = new String[3];
+                danee[0]=i.imie;
+                danee[1]=i.nazwisko;
+                danee[2]= String.valueOf(i.czasPrzejazdu);
+                printWriter.println(daneNaLinieCSV(danee));
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //assertTrue(plik.exists());
+    }
 
     private static List<String> liniaCSVnaDane(String linia) {
         List<String> wartosci = new ArrayList<>();
@@ -120,6 +139,9 @@ public class Main {
             }
         }
         return wartosci;
+    }
+    private static String daneNaLinieCSV(String[] dane) {
+        return Stream.of(dane).collect(Collectors.joining(";"));
     }
     private static List<List<String>> odczytPliku(String sciezka)
     {
