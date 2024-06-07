@@ -18,16 +18,6 @@ public class Tor {
         else
             return false;
     }
-
-
-    public Tor(String nazwa, double dlugosc, double procentProstych, double procentZakretow, double szansaNaDeszcz) {
-        this.nazwa = nazwa;
-        this.dlugosc = dlugosc;
-        this.procentProstych = procentProstych;
-        this.procentZakretow = procentZakretow;
-        this.szansaNaDeszcz = szansaNaDeszcz;
-        this.czyPada = warunkiPogodowe();
-    }
     public Tor(List<String> dane) {
         this.nazwa = dane.get(0);
         this.dlugosc = Double.parseDouble(dane.get(1));

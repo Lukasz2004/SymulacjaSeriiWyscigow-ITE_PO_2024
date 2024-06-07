@@ -12,22 +12,6 @@ public class Kierowca extends Personel {
     public double czasPrzejazdu;
     public boolean czyWPitstopie;
 
-    public Kierowca(Druzyna druzyna,String imie, String nazwisko, String narodowosc, int wiek, Pojazd pojazd,double predkoscProsta, double predkoscZakret, double umiejetnoscWyprzedania, double umiejetnoscObrony, double agresywnosc, double adaptacjaPogoda, double ekonomicznoscJazdy) {
-        this.druzyna = druzyna;
-        this.imie = imie;
-        this.nazwisko = nazwisko;
-        this.narodowosc = narodowosc;
-        this.wiek = wiek;
-        this.pojazd = pojazd;
-        this.predkoscProsta = predkoscProsta;
-        this.predkoscZakret = predkoscZakret;
-        this.umiejetnoscWyprzedania = umiejetnoscWyprzedania;
-        this.umiejetnoscObrony = umiejetnoscObrony;
-        this.agresywnosc = agresywnosc;
-        this.adaptacjaPogoda = adaptacjaPogoda;
-        this.ekonomicznoscJazdy = ekonomicznoscJazdy;
-        this.czasPrzejazdu = 0;
-    }
     public Kierowca(Druzyna druzynaInput, Pojazd pojazdInput, List<String> dane) {
         this.druzyna = druzynaInput;
         this.imie = dane.get(1);
