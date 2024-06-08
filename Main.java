@@ -37,10 +37,9 @@ public class Main {
                     przejazdKierowcy(listaKierowcow.get(i), tor, 0.0);
                 }
                 else {
-                    przejazdKierowcy(listaKierowcow.get(i), tor, listaKierowcow.get(i-1).czasPrzejazdu);
+                   przejazdKierowcy(listaKierowcow.get(i), tor, listaKierowcow.get(i-1).czasPrzejazdu);
                 }
             }
-
             for(int i=1; i<listaKierowcow.size();i++)
             {
                 wyprzedzanie(i);
@@ -64,6 +63,7 @@ public class Main {
             kierowca.czyWPitstopie=true;
             czasPrzejazdu += pitstop(kierowca);
         }
+
         kierowca.czasPrzejazdu = Math.max(kierowca.czasPrzejazdu + czasPrzejazdu, CzasPoprzednika);
     }
     private static double pitstop(Kierowca kierowca){
@@ -87,19 +87,49 @@ public class Main {
     {
         Kierowca kierowca1 = listaKierowcow.get(pozKierowcy-1);
         Kierowca kierowca2 = listaKierowcow.get(pozKierowcy);
+        double zamiana;
         Random wyprzedzanie = new Random();
+
         if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25||kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie)
         {
             System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
             if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble())>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble())|| kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
             {
+                zamiana = kierowca2.czasPrzejazdu;
                 kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
+                kierowca1.czasPrzejazdu=zamiana;
+                listaKierowcow.set(pozKierowcy-1,kierowca2);
+                listaKierowcow.set(pozKierowcy, kierowca1);
+
+                System.out.println(kierowca2.imie + " WYPRZEDZIŁ " + kierowca1.imie);
+
+                if(kierowca2.czasPrzejazdu==kierowca1.czasPrzejazdu&&pozKierowcy>2)
+            {
+                wyprzedzanie(pozKierowcy-1);
+            }
+
+            }
+        }
+
+
+        /*
+
+        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25||kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie)
+        {
+            System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
+            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble())>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble())|| kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
+            {
+                zamiana = kierowca2.czasPrzejazdu;
+                kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
+                kierowca1.czasPrzejazdu=zamiana;
                 listaKierowcow.set(pozKierowcy-1,kierowca2);
                 listaKierowcow.set(pozKierowcy, kierowca1);
 
                 System.out.println(kierowca2.imie + " WYPRZEDZIŁ " + kierowca1.imie);
             }
         }
+
+         */
 
     }
 
