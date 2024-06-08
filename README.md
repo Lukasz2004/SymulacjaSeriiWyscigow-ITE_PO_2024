@@ -13,3 +13,7 @@ Programowanie Obiektowe - ITE - Semestr letni 2023/2024
 - Kamil Jasyk
 
 
+## Wersja środowiska:
+IntelliJ IDEA 2024.1.2 (Ultimate Edition)
+Build #IU-241.17011.79
+Java Runtime version: 17.0.11+1-b1207.24 amd64
