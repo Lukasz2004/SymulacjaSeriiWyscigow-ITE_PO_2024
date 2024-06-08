@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Kierowca extends Personel {
@@ -11,6 +12,11 @@ public class Kierowca extends Personel {
     public double ekonomicznoscJazdy;
     public double czasPrzejazdu;
     public boolean czyWPitstopie;
+
+    public ArrayList<Double> statystykiOkrazenia=new ArrayList<>();
+    public ArrayList<Integer> statystykiWynikow=new ArrayList<>();
+    public ArrayList<Integer> statystykiWyprzedzenia=new ArrayList<>();
+
 
     public Kierowca(Druzyna druzynaInput, Pojazd pojazdInput, List<String> dane) {
         this.druzyna = druzynaInput;
@@ -27,5 +33,6 @@ public class Kierowca extends Personel {
         this.adaptacjaPogoda = Double.parseDouble(dane.get(11));
         this.ekonomicznoscJazdy = Double.parseDouble(dane.get(12));
         this.czasPrzejazdu = 0;
+        this.czyWPitstopie = false;
     }
 }

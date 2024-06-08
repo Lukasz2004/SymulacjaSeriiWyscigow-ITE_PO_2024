@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 public class Main {
@@ -12,35 +9,30 @@ public class Main {
     private static ArrayList<Pojazd> listaPojazdow = new ArrayList<>();
     private static ArrayList<Mechanik> listaMechanikow = new ArrayList<>();
 
-    private static ArrayList<Integer> statystykiLiczbaWyprzedzen = new ArrayList<>();
     public static void main(String[] args){
-        wczytajDane();
+        ObslugaPlikow.wczytajDane();
 
         for(int nrWyscigu=1; nrWyscigu<=listaTorow.size(); nrWyscigu++)
         {
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
-            zapiszWyniki(listaKierowcow,"Kierowcy - Wyscig " + nrWyscigu);
+            //ObslugaPlikow.zapiszWyniki(false,"Okrazenia");\
         }
-        zapiszWyniki(listaKierowcow,"Kierowcy - _Koncowe");
+        //ObslugaPlikow.zapiszWyniki(true);
     }
-
     private static void uruchomWyscig(Tor tor){
         System.out.println("TOR: "+tor.nazwa);
         if(tor.czyPada) System.out.println("Bedzie dzis padac");
         System.out.println("START !!!");
+        for(Kierowca i:listaKierowcow)
+        {
+            i.czasPrzejazdu=0.0;
+            i.pojazd.stanPaliwa=50;
+            i.pojazd.stanOpon=100;
+            i.statystykiOkrazenia.clear();
+        }
+
         for(int okrazenie=1; okrazenie<=liczbaOkrazenNaTor; okrazenie++)
         {
-
-            if(okrazenie==1)
-            {
-                for(int i=0; i<listaKierowcow.size();i++)
-                {
-                    listaKierowcow.get(i).czasPrzejazdu=0.0;
-                    listaKierowcow.get(i).pojazd.stanPaliwa=50;
-                    listaKierowcow.get(i).pojazd.stanOpon=100;
-                }
-            }
-
             System.out.println("\nOKRĄŻENIE: " + okrazenie);
             for(int i=0; i<listaKierowcow.size();i++)
             {
@@ -75,8 +67,8 @@ public class Main {
             kierowca.czyWPitstopie=true;
             czasPrzejazdu += pitstop(kierowca);
         }
-
         kierowca.czasPrzejazdu = Math.max(kierowca.czasPrzejazdu + czasPrzejazdu, CzasPoprzednika);
+        kierowca.statystykiOkrazenia.add(kierowca.czasPrzejazdu);
     }
     private static double pitstop(Kierowca kierowca){
         double czasPitstopu = 0;
@@ -151,96 +143,13 @@ public class Main {
             System.out.println();
         }
     }
-    private static void zapiszWyniki(ArrayList <Kierowca> dane, String nazwaPliku) {
-        File plik = new File("Wyniki/"+nazwaPliku+".csv");
-        try (PrintWriter printWriter = new PrintWriter(plik)) {
-            printWriter.println("Imie;Nazwisko;Czas");
-            for(Kierowca i:dane)
-            {
-                String[] danee = new String[3];
-                danee[0]=i.imie;
-                danee[1]=i.nazwisko;
-                danee[2]= String.valueOf(i.czasPrzejazdu);
-                printWriter.println(daneNaLinieCSV(danee));
-            }
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        //assertTrue(plik.exists());
-    }
-
-    private static List<String> liniaCSVnaDane(String linia) {
-        List<String> wartosci = new ArrayList<>();
-        try (Scanner scanner = new Scanner(linia)) {
-            scanner.useDelimiter(";");
-            while (scanner.hasNext()) {
-                wartosci.add(scanner.next());
-            }
-        }
-        return wartosci;
-    }
-    private static String daneNaLinieCSV(String[] dane) {
-        return String.join(";", dane);
-    }
-    private static List<List<String>> odczytPliku(String sciezka)
+    public static void inicjalizujDane(ArrayList<Kierowca> inKierowca, ArrayList<Tor> inTor, ArrayList<Druzyna> inDruzyna, ArrayList<Pojazd> inPojazd, ArrayList<Mechanik> inMechanik)
     {
-        List<List<String>> zwrotDanych = new ArrayList<>();
-        try (Scanner scannerDruzyn = new Scanner(new File(sciezka))) {
-            while (scannerDruzyn.hasNextLine()) {
-                zwrotDanych.add(liniaCSVnaDane(scannerDruzyn.nextLine()));
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        zwrotDanych.remove(0); //Usuwa naglowki
-        return zwrotDanych;
+        listaKierowcow=inKierowca;
+        listaTorow=inTor;
+        listaDruzyn=inDruzyna;
+        listaPojazdow=inPojazd;
+        listaMechanikow=inMechanik;
     }
-    private static void wczytajDane(){
-        String sciezkaDaneDruzyn = "DaneStartowe/Druzyna.csv";
-        String sciezkaDaneMechanikow = "DaneStartowe/Mechanik.csv";
-        String sciezkaDanePojazdow = "DaneStartowe/Pojazd.csv";
-        String sciezkaDaneKierowcow = "DaneStartowe/Kierowca.csv";
-        String sciezkaDaneTorow = "DaneStartowe/Tor.csv";
 
-        //Wczytuje druzyny
-        for (List<String> druzynaInput : odczytPliku(sciezkaDaneDruzyn)) {
-            Druzyna druzyna = new Druzyna(druzynaInput.get(0));
-            listaDruzyn.add(druzyna);
-        }
-
-        //Wczytuje mechanikow
-        for (List<String> mechanikInput : odczytPliku(sciezkaDaneMechanikow)) {
-            Mechanik mechanik = new Mechanik(
-                    listaDruzyn.get(Integer.parseInt(mechanikInput.get(0))-1),
-                    mechanikInput
-            );
-            listaMechanikow.add(mechanik);
-        }
-
-        //Wczytuje pojazdy
-        for (List<String> pojazdInput : odczytPliku(sciezkaDanePojazdow)) {
-            Pojazd pojazd = new Pojazd(
-                    listaMechanikow.get(Integer.parseInt(pojazdInput.get(1))-1),
-                    pojazdInput
-            );
-            listaPojazdow.add(pojazd);
-        }
-
-        //Wczytuje kierowcow
-        for (List<String> kierowcaInput : odczytPliku(sciezkaDaneKierowcow)) {
-            Kierowca kierowca = new Kierowca(
-                    listaDruzyn.get(Integer.parseInt(kierowcaInput.get(0))-1),
-                    listaPojazdow.get(Integer.parseInt(kierowcaInput.get(5))-1),
-                    kierowcaInput
-            );
-            listaKierowcow.add(kierowca);
-        }
-
-        //Wczytuje tory
-        for (List<String> torInput : odczytPliku(sciezkaDaneTorow)) {
-            Tor tor = new Tor(torInput);
-            listaTorow.add(tor);
-        }
-    }
 }
