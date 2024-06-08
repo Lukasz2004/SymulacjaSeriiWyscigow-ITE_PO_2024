@@ -3,8 +3,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
@@ -141,7 +139,7 @@ public class Main {
         return wartosci;
     }
     private static String daneNaLinieCSV(String[] dane) {
-        return Stream.of(dane).collect(Collectors.joining(";"));
+        return String.join(";", dane);
     }
     private static List<List<String>> odczytPliku(String sciezka)
     {
