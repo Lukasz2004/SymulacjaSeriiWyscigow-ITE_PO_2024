@@ -50,7 +50,7 @@ public class Main {
         }
         System.out.println("META !!!");
     }
-    private static void przejazdKierowcy(Kierowca kierowca, Tor tor, Double CzasPoprzednika)
+    private static void przejazdKierowcy(Kierowca kierowca, Tor tor, double CzasPoprzednika)
     {
         kierowca.czyWPitstopie=false;
         double czasPrzejazdu = (kierowca.predkoscProsta*kierowca.pojazd.szybkosc/tor.procentProstych) + (kierowca.predkoscZakret*kierowca.pojazd.przyczepnosc/tor.procentZakretow);
