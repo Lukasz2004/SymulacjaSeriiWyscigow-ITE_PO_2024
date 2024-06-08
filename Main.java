@@ -26,9 +26,21 @@ public class Main {
 
     private static void uruchomWyscig(Tor tor){
         System.out.println("TOR: "+tor.nazwa);
+        if(tor.czyPada) System.out.println("Bedzie dzis padac");
         System.out.println("START !!!");
         for(int okrazenie=1; okrazenie<=liczbaOkrazenNaTor; okrazenie++)
         {
+
+            if(okrazenie==1)
+            {
+                for(int i=0; i<listaKierowcow.size();i++)
+                {
+                    listaKierowcow.get(i).czasPrzejazdu=0.0;
+                    listaKierowcow.get(i).pojazd.stanPaliwa=50;
+                    listaKierowcow.get(i).pojazd.stanOpon=100;
+                }
+            }
+
             System.out.println("\nOKRĄŻENIE: " + okrazenie);
             for(int i=0; i<listaKierowcow.size();i++)
             {
