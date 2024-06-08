@@ -16,6 +16,7 @@ public class Kierowca extends Personel {
     public ArrayList<Double> statystykiOkrazenia=new ArrayList<>();
     public ArrayList<Integer> statystykiWynikow=new ArrayList<>();
     public ArrayList<Integer> statystykiWyprzedzenia=new ArrayList<>();
+    public int punktyZaPozycje=0;
 
 
     public Kierowca(Druzyna druzynaInput, Pojazd pojazdInput, List<String> dane) {

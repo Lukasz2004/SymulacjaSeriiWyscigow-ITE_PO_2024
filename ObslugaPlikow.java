@@ -1,6 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -58,7 +61,7 @@ public class ObslugaPlikow {
             listaTorow.add(tor);
         }
 
-        Main.inicjalizujDane(listaKierowcow,listaTorow,listaDruzyn,listaPojazdow,listaMechanikow);
+        Main.setterDanych(listaKierowcow,listaTorow,listaDruzyn,listaPojazdow,listaMechanikow);
     }
     private static List<List<String>> odczytPliku(String sciezka)
     {
@@ -90,36 +93,67 @@ public class ObslugaPlikow {
 
 
 
-    /*public static void zapiszWyniki(boolean czyWszystkie)
+    public static void zapiszWyniki(boolean czyWszystkieKoncowe)
     {
-        if(czyWszystkie)
+        if(czyWszystkieKoncowe)
         {
             zapiszWyniki(false,"Wyniki");
             zapiszWyniki(false,"Wyprzedzenia");
             zapiszWyniki(false,"Parametry");
-            zapiszWyniki(false,"Okrazenia");
         }
         else
         {
             throw new RuntimeException("Nie sprecyzowano typu zapisu wynikow.");
         }
     }
-    public static void zapiszWyniki(boolean czyWszystkie, String typZapisu)
+    public static void zapiszWyniki(boolean czyWszystkieKoncowe, String typZapisu)
     {
-        if (czyWszystkie)
+        if (czyWszystkieKoncowe)
         {
             zapiszWyniki(true);
         }
+        ArrayList<Kierowca> listaKierowcow = Main.getListaKierowcow();
 
         ArrayList<ArrayList<String>> arrayWynikowy = new ArrayList<>();
         ArrayList<String> arrayNaglowki = new ArrayList<>();
+        if(typZapisu.equals("Wyniki"))
+        {
+            listaKierowcow.sort(new Comparator<Kierowca>() {
+                @Override
+                public int compare(Kierowca o1, Kierowca o2) {
+                    return o1.punktyZaPozycje > o2.punktyZaPozycje ? -1 : (o1.punktyZaPozycje < o2.punktyZaPozycje) ? 1 : 0;
+                }
+            });
+            arrayNaglowki.add("Imie");
+            arrayNaglowki.add("Nazwisko");
+            for(int i=0; i<Main.getIloscTorow();i++)
+            {
+                arrayNaglowki.add("Wyscig "+String.valueOf(i+1));
+            }
+            arrayNaglowki.add("Suma punktow");
+            arrayWynikowy.add(arrayNaglowki);
+
+            for(Kierowca kierowca : listaKierowcow)
+            {
+                ArrayList<String> arrayDanowy = new ArrayList<>();
+                arrayDanowy.add(kierowca.imie);
+                arrayDanowy.add(kierowca.nazwisko);
+                for(Integer i:kierowca.statystykiWynikow)
+                {
+                    arrayDanowy.add(String.valueOf(i));
+                }
+                arrayDanowy.add(String.valueOf(kierowca.punktyZaPozycje));
+                arrayWynikowy.add(arrayDanowy);
+            }
+            zapisPliku(arrayWynikowy,"_PozycjeWSezonie");
+        }
         if(typZapisu.equals("Wyprzedzenia"))
         {
             arrayNaglowki.add("Imie");
             arrayNaglowki.add("Nazwisko");
-            for(int i=0;i<listaTorow.size();i++)
+            for(int i=0; i<Main.getIloscTorow();i++)
             {
-                arrayNaglowki.add(String.valueOf(i+1));
+                arrayNaglowki.add("Wyscig "+String.valueOf(i+1));
             }
             arrayNaglowki.add("Suma");
             arrayWynikowy.add(arrayNaglowki);
@@ -129,21 +163,31 @@ public class ObslugaPlikow {
                 ArrayList<String> arrayDanowy = new ArrayList<>();
                 arrayDanowy.add(kierowca.imie);
                 arrayDanowy.add(kierowca.nazwisko);
-                Integer sumaWyprzedzenKierowcy;
+                Integer sumaWyprzedzenKierowcy = 0;
                 for(Integer i:kierowca.statystykiWyprzedzenia)
                 {
                     arrayDanowy.add(String.valueOf(i));
+                    sumaWyprzedzenKierowcy+=i;
                 }
-                arrayDanowy.add()
+                arrayDanowy.add(String.valueOf(sumaWyprzedzenKierowcy));
                 arrayWynikowy.add(arrayDanowy);
             }
-            zapisPliku(arrayWynikowy,"_KoncoweWyprzedzenia");
+            zapisPliku(arrayWynikowy,"_Wyprzedzenia");
         }
         if(typZapisu.equals("Parametry"))
         {
             arrayNaglowki.add("Imie");
             arrayNaglowki.add("Nazwisko");
-            arrayNaglowki.add("Bla");
+            arrayNaglowki.add("Predkosc na prostych");
+            arrayNaglowki.add("Predkosc na zakretach");
+            arrayNaglowki.add("Umiejetnosc wyprzedzania");
+            arrayNaglowki.add("Umiejetnosc obrony");
+            arrayNaglowki.add("Agresywnosc");
+            arrayNaglowki.add("Adaptacja do pogody");
+            arrayNaglowki.add("Ekonomicznosc jazdy");
+            arrayNaglowki.add("Szybkosc pojazdu");
+            arrayNaglowki.add("Przyczepnosc pojazdu");
+            arrayNaglowki.add("Predkosc mechanika");
             arrayWynikowy.add(arrayNaglowki);
 
             for(Kierowca kierowca : listaKierowcow)
@@ -151,10 +195,47 @@ public class ObslugaPlikow {
                 ArrayList<String> arrayDanowy = new ArrayList<>();
                 arrayDanowy.add(kierowca.imie);
                 arrayDanowy.add(kierowca.nazwisko);
-                arrayDanowy.add(String.valueOf(kierowca.statystykiOkrazenia));
+                arrayDanowy.add(String.valueOf(kierowca.predkoscProsta));
+                arrayDanowy.add(String.valueOf(kierowca.predkoscZakret));
+                arrayDanowy.add(String.valueOf(kierowca.umiejetnoscWyprzedania));
+                arrayDanowy.add(String.valueOf(kierowca.umiejetnoscObrony));
+                arrayDanowy.add(String.valueOf(kierowca.agresywnosc));
+                arrayDanowy.add(String.valueOf(kierowca.adaptacjaPogoda));
+                arrayDanowy.add(String.valueOf(kierowca.ekonomicznoscJazdy));
+
+                arrayDanowy.add(String.valueOf(kierowca.pojazd.szybkosc));
+                arrayDanowy.add(String.valueOf(kierowca.pojazd.przyczepnosc));
+
+                arrayDanowy.add(String.valueOf(kierowca.pojazd.mechanik.szybkosc));
                 arrayWynikowy.add(arrayDanowy);
             }
-            zapisPliku(arrayWynikowy,"_KoncoweParametry");
+            zapisPliku(arrayWynikowy,"_UmiejetnosciKierowcowPoSezonie");
+        }
+        if(typZapisu.equals("Okrazenia"))
+        {
+            arrayNaglowki.add("Imie");
+            arrayNaglowki.add("Nazwisko");
+            for(int i=0; i<listaKierowcow.get(0).statystykiOkrazenia.size();i++)
+            {
+                arrayNaglowki.add("Okrazenie "+String.valueOf(i+1));
+            }
+            arrayNaglowki.add("Pozycja koncowa");
+            arrayWynikowy.add(arrayNaglowki);
+
+            for(int i=0; i<listaKierowcow.size();i++)
+            {
+                Kierowca kierowca = listaKierowcow.get(i);
+                ArrayList<String> arrayDanowy = new ArrayList<>();
+                arrayDanowy.add(kierowca.imie);
+                arrayDanowy.add(kierowca.nazwisko);
+                for(Double ii:kierowca.statystykiOkrazenia)
+                {
+                    arrayDanowy.add(String.valueOf(ii));
+                }
+                arrayDanowy.add(String.valueOf(i+1));
+                arrayWynikowy.add(arrayDanowy);
+            }
+            zapisPliku(arrayWynikowy,"Wyscig" + listaKierowcow.get(0).statystykiWynikow.size());
         }
 
     }
@@ -176,5 +257,5 @@ public class ObslugaPlikow {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }*/
+    }
 }

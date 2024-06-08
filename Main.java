@@ -1,5 +1,5 @@
-import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
@@ -15,9 +15,9 @@ public class Main {
         for(int nrWyscigu=1; nrWyscigu<=listaTorow.size(); nrWyscigu++)
         {
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
-            //ObslugaPlikow.zapiszWyniki(false,"Okrazenia");\
+            ObslugaPlikow.zapiszWyniki(false,"Okrazenia");
         }
-        //ObslugaPlikow.zapiszWyniki(true);
+        ObslugaPlikow.zapiszWyniki(true);
     }
     private static void uruchomWyscig(Tor tor){
         System.out.println("TOR: "+tor.nazwa);
@@ -29,6 +29,7 @@ public class Main {
             i.pojazd.stanPaliwa=50;
             i.pojazd.stanOpon=100;
             i.statystykiOkrazenia.clear();
+            i.statystykiWyprzedzenia.add(0);
         }
 
         for(int okrazenie=1; okrazenie<=liczbaOkrazenNaTor; okrazenie++)
@@ -52,6 +53,14 @@ public class Main {
 
         }
         System.out.println("META !!!");
+        for(int i=0; i<listaKierowcow.size();i++)
+        {
+            Kierowca kierowca = listaKierowcow.get(i);
+            Integer punktyZaPozycje = listaKierowcow.size()-i;
+            if(i==0){punktyZaPozycje +=2;}
+            kierowca.punktyZaPozycje+=punktyZaPozycje;
+            kierowca.statystykiWynikow.add(i+1);
+        }
     }
     private static void przejazdKierowcy(Kierowca kierowca, Tor tor, double CzasPoprzednika)
     {
@@ -102,38 +111,19 @@ public class Main {
                 zamiana = kierowca2.czasPrzejazdu;
                 kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
                 kierowca1.czasPrzejazdu=zamiana;
+                kierowca2.statystykiWyprzedzenia.set(kierowca2.statystykiWyprzedzenia.size()-1,kierowca2.statystykiWyprzedzenia.get(kierowca2.statystykiWyprzedzenia.size()-1)+1);
                 listaKierowcow.set(pozKierowcy-1,kierowca2);
                 listaKierowcow.set(pozKierowcy, kierowca1);
 
                 System.out.println(kierowca2.imie + " WYPRZEDZIŁ " + kierowca1.imie);
 
                 if(kierowca2.czasPrzejazdu==kierowca1.czasPrzejazdu&&pozKierowcy>2)
-            {
-                wyprzedzanie(pozKierowcy-1);
-            }
+                {
+                    wyprzedzanie(pozKierowcy-1);
+                }
 
             }
         }
-
-
-        /*
-
-        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25||kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie)
-        {
-            System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
-            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble())>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble())|| kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
-            {
-                zamiana = kierowca2.czasPrzejazdu;
-                kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
-                kierowca1.czasPrzejazdu=zamiana;
-                listaKierowcow.set(pozKierowcy-1,kierowca2);
-                listaKierowcow.set(pozKierowcy, kierowca1);
-
-                System.out.println(kierowca2.imie + " WYPRZEDZIŁ " + kierowca1.imie);
-            }
-        }
-
-         */
 
     }
 
@@ -143,13 +133,20 @@ public class Main {
             System.out.println();
         }
     }
-    public static void inicjalizujDane(ArrayList<Kierowca> inKierowca, ArrayList<Tor> inTor, ArrayList<Druzyna> inDruzyna, ArrayList<Pojazd> inPojazd, ArrayList<Mechanik> inMechanik)
+    public static void setterDanych(ArrayList<Kierowca> inKierowca, ArrayList<Tor> inTor, ArrayList<Druzyna> inDruzyna, ArrayList<Pojazd> inPojazd, ArrayList<Mechanik> inMechanik)
     {
         listaKierowcow=inKierowca;
         listaTorow=inTor;
         listaDruzyn=inDruzyna;
         listaPojazdow=inPojazd;
         listaMechanikow=inMechanik;
+    }
+    public static ArrayList<Kierowca> getListaKierowcow(){
+        return listaKierowcow;
+    }
+    public static Integer getIloscTorow()
+    {
+        return listaTorow.size();
     }
 
 }
