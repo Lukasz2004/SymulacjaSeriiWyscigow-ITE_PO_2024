@@ -1,23 +1,49 @@
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
+    private static final double globalnaAgresywnosc = 1;
+    private static final double globalnaWartoscUlepszen = 0.25;
+    private static final double wymaganaPojemnoscPaliwa = 50;
     private static ArrayList<Kierowca> listaKierowcow = new ArrayList<>();
     private static ArrayList<Tor> listaTorow = new ArrayList<>();
     private static ArrayList<Druzyna> listaDruzyn = new ArrayList<>();
     private static ArrayList<Pojazd> listaPojazdow = new ArrayList<>();
     private static ArrayList<Mechanik> listaMechanikow = new ArrayList<>();
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
         ObslugaPlikow.wczytajDane();
 
         for(int nrWyscigu=1; nrWyscigu<=listaTorow.size(); nrWyscigu++)
         {
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
             ObslugaPlikow.zapiszWyniki(false,"Okrazenia");
+            ulepszenia();
+
         }
+
         ObslugaPlikow.zapiszWyniki(true);
+
+        /*
+        if(Objects.equals(listaKierowcow.get(0).imie, "Max")||Objects.equals(listaKierowcow.get(0).imie, "Fernando ")||Objects.equals(listaKierowcow.get(0).imie, "Sergio")||Objects.equals(listaKierowcow.get(0).imie, "Lewis "))
+        {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Max.wav").getAbsoluteFile());;
+            if(Objects.equals(listaKierowcow.get(0).imie, "Max")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Max.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Fernando ")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Fernando.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Lewis ")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Lewis.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Sergio")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Sergio.wav").getAbsoluteFile());
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+            Thread.sleep(10000);
+        }
+         */
     }
     private static void uruchomWyscig(Tor tor){
         System.out.println("TOR: "+tor.nazwa);
@@ -26,7 +52,7 @@ public class Main {
         for(Kierowca i:listaKierowcow)
         {
             i.czasPrzejazdu=0.0;
-            i.pojazd.stanPaliwa=50;
+            i.pojazd.stanPaliwa=wymaganaPojemnoscPaliwa;
             i.pojazd.stanOpon=100;
             i.statystykiOkrazenia.clear();
             i.statystykiWyprzedzenia.add(0);
@@ -53,6 +79,8 @@ public class Main {
 
         }
         System.out.println("META !!!");
+
+        //Przyznawanie punktow za miejsce w wyscigu
         for(int i=0; i<listaKierowcow.size();i++)
         {
             Kierowca kierowca = listaKierowcow.get(i);
@@ -64,6 +92,9 @@ public class Main {
     }
     private static void przejazdKierowcy(Kierowca kierowca, Tor tor, double CzasPoprzednika)
     {
+        if(kierowca.czasPrzejazdu < 0) return;
+
+
         kierowca.czyWPitstopie=false;
         double czasPrzejazdu = (kierowca.predkoscProsta*kierowca.pojazd.szybkosc/tor.procentProstych) + (kierowca.predkoscZakret*kierowca.pojazd.przyczepnosc/tor.procentZakretow);
         Random randTime = new Random();
@@ -103,10 +134,10 @@ public class Main {
         double zamiana;
         Random wyprzedzanie = new Random();
 
-        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25||kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie)
+        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25 && kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie&&kierowca2.czasPrzejazdu!=-1)
         {
             System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
-            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble())>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble())|| kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
+            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble()*globalnaAgresywnosc)>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble()) && kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
             {
                 zamiana = kierowca2.czasPrzejazdu;
                 kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
@@ -123,9 +154,47 @@ public class Main {
                 }
 
             }
+            else if(((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*globalnaAgresywnosc))/2 > wyprzedzanie.nextDouble())
+            {
+                System.out.println(wyprzedzanie.nextDouble());
+                kierowca2.czasPrzejazdu = -1;
+                System.out.println(kierowca2.imie + " WYPADEK - KONIEC");
+                for(int i = pozKierowcy;i<listaKierowcow.size()-1;i++)
+                {
+                    listaKierowcow.set(i,listaKierowcow.get(i+1));
+                }
+                listaKierowcow.set(listaKierowcow.size()-1, kierowca2);
+                if(((kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*globalnaAgresywnosc))/5 > wyprzedzanie.nextDouble() && !kierowca1.czyWPitstopie)
+                {
+                    kierowca1.czasPrzejazdu = -1;
+                    System.out.println(kierowca1.imie + " WYPADEK - KONIEC");
+                    for(int i = pozKierowcy+1;i<listaKierowcow.size()-1;i++)
+                    {
+                        listaKierowcow.set(i,listaKierowcow.get(i+1));
+                    }
+                    listaKierowcow.set(listaKierowcow.size()-1, kierowca1);
+                }
+
+            }
         }
 
     }
+
+
+    private static void ulepszenia()
+    {
+        double ulepszenieMechanikow = globalnaWartoscUlepszen/20;
+        double ulepszeniePojazdow = globalnaWartoscUlepszen/10;
+        double ulepszenieKierowcow = globalnaWartoscUlepszen/5;
+
+        for(Kierowca i:listaKierowcow)
+        {
+            i.ulepszStatystyki(ulepszenieKierowcow);
+            i.pojazd.ulepszStatystyki(ulepszeniePojazdow);
+            i.pojazd.mechanik.ulepszStatystyki(ulepszenieMechanikow);
+        }
+    }
+
 
     private static void pokazWyniki() {
         for (Kierowca kierowca : listaKierowcow) {

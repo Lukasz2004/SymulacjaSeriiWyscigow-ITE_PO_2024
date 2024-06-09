@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public class Kierowca extends Personel {
+public class Kierowca extends Personel implements Ulepszenie {
     public Pojazd pojazd;
     public double predkoscProsta;
     public double predkoscZakret;
@@ -35,5 +36,19 @@ public class Kierowca extends Personel {
         this.ekonomicznoscJazdy = Double.parseDouble(dane.get(12));
         this.czasPrzejazdu = 0;
         this.czyWPitstopie = false;
+    }
+
+    @Override
+    public void ulepszStatystyki(double wartosc) {
+        Random ulepszenie = new Random();
+        int wybor;
+        wybor = ulepszenie.nextInt(7);
+        if(wybor == 0) this.predkoscProsta += wartosc;
+        if(wybor == 1) this.predkoscZakret += wartosc;
+        if(wybor == 2) this.umiejetnoscWyprzedania += wartosc;
+        if(wybor == 3) this.umiejetnoscObrony += wartosc;
+        if(wybor == 4) this.agresywnosc += wartosc;
+        if(wybor == 5) this.adaptacjaPogoda += wartosc;
+        if(wybor == 6) this.ekonomicznoscJazdy += wartosc;
     }
 }
