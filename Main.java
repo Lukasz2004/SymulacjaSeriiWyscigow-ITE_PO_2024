@@ -24,6 +24,7 @@ public class Main {
         {
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
             ObslugaPlikow.zapiszWyniki(false,"Okrazenia");
+            ulepszenia();
 
         }
 
@@ -78,6 +79,8 @@ public class Main {
 
         }
         System.out.println("META !!!");
+
+        //Przyznawanie punktow za miejsce w wyscigu
         for(int i=0; i<listaKierowcow.size();i++)
         {
             Kierowca kierowca = listaKierowcow.get(i);
@@ -86,8 +89,6 @@ public class Main {
             kierowca.punktyZaPozycje+=punktyZaPozycje;
             kierowca.statystykiWynikow.add(i+1);
         }
-
-        ulepszenia();
     }
     private static void przejazdKierowcy(Kierowca kierowca, Tor tor, double CzasPoprzednika)
     {
@@ -186,19 +187,11 @@ public class Main {
         double ulepszeniePojazdow = globalnaWartoscUlepszen/10;
         double ulepszenieKierowcow = globalnaWartoscUlepszen/5;
 
-        for(int i=0;i<listaMechanikow.size();i++)
+        for(Kierowca i:listaKierowcow)
         {
-            listaMechanikow.get(i).ulepszStatystyki(ulepszenieMechanikow);
-        }
-
-        for(int i=0;i<listaPojazdow.size();i++)
-        {
-            listaPojazdow.get(i).ulepszStatystyki(ulepszeniePojazdow);
-        }
-
-        for(int i=0; i<listaKierowcow.size();i++)
-        {
-            listaKierowcow.get(i).ulepszStatystyki(ulepszenieKierowcow);
+            i.ulepszStatystyki(ulepszenieKierowcow);
+            i.pojazd.ulepszStatystyki(ulepszeniePojazdow);
+            i.pojazd.mechanik.ulepszStatystyki(ulepszenieMechanikow);
         }
     }
 
