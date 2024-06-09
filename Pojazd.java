@@ -18,4 +18,14 @@ public class Pojazd {
         this.stanOpon = 100;
 
     }
+    public Pojazd (Pojazd p)
+    {
+        this.nazwa = p.nazwa;
+        this.mechanik = mechanik;
+        this.szybkosc = p.szybkosc;
+        this.przyczepnosc = p.przyczepnosc;
+        this.stanPaliwa = p.stanPaliwa;
+        this.stanOpon = p.stanOpon;
+
+    }
 }

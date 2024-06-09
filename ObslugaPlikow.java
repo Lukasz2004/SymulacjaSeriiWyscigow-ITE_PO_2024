@@ -49,7 +49,7 @@ public class ObslugaPlikow {
         for (List<String> kierowcaInput : odczytPliku(sciezkaDaneKierowcow)) {
             Kierowca kierowca = new Kierowca(
                     listaDruzyn.get(Integer.parseInt(kierowcaInput.get(0))-1),
-                    listaPojazdow.get(Integer.parseInt(kierowcaInput.get(5))-1),
+                    new Pojazd(listaPojazdow.get(Integer.parseInt(kierowcaInput.get(5))-1)),
                     kierowcaInput
             );
             listaKierowcow.add(kierowca);
