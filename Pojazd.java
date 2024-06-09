@@ -21,7 +21,7 @@ public class Pojazd {
     public Pojazd (Pojazd p)
     {
         this.nazwa = p.nazwa;
-        this.mechanik = mechanik;
+        this.mechanik = p.mechanik;
         this.szybkosc = p.szybkosc;
         this.przyczepnosc = p.przyczepnosc;
         this.stanPaliwa = p.stanPaliwa;
