@@ -91,6 +91,9 @@ public class Main {
     }
     private static void przejazdKierowcy(Kierowca kierowca, Tor tor, double CzasPoprzednika)
     {
+        if(kierowca.czasPrzejazdu < 0) return;
+
+
         kierowca.czyWPitstopie=false;
         double czasPrzejazdu = (kierowca.predkoscProsta*kierowca.pojazd.szybkosc/tor.procentProstych) + (kierowca.predkoscZakret*kierowca.pojazd.przyczepnosc/tor.procentZakretow);
         Random randTime = new Random();
@@ -130,7 +133,7 @@ public class Main {
         double zamiana;
         Random wyprzedzanie = new Random();
 
-        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25||kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie)
+        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25 && kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie&&kierowca2.czasPrzejazdu!=-1)
         {
             System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
             if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble()*globalnaAgresywnosc)>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble()) && kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
@@ -147,6 +150,28 @@ public class Main {
                 if(kierowca2.czasPrzejazdu==kierowca1.czasPrzejazdu&&pozKierowcy>2)
                 {
                     wyprzedzanie(pozKierowcy-1);
+                }
+
+            }
+            else if(((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*globalnaAgresywnosc))/2 > wyprzedzanie.nextDouble())
+            {
+                System.out.println(wyprzedzanie.nextDouble());
+                kierowca2.czasPrzejazdu = -1;
+                System.out.println(kierowca2.imie + " WYPADEK - KONIEC");
+                for(int i = pozKierowcy;i<listaKierowcow.size()-1;i++)
+                {
+                    listaKierowcow.set(i,listaKierowcow.get(i+1));
+                }
+                listaKierowcow.set(listaKierowcow.size()-1, kierowca2);
+                if(((kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*globalnaAgresywnosc))/5 > wyprzedzanie.nextDouble() && !kierowca1.czyWPitstopie)
+                {
+                    kierowca1.czasPrzejazdu = -1;
+                    System.out.println(kierowca1.imie + " WYPADEK - KONIEC");
+                    for(int i = pozKierowcy+1;i<listaKierowcow.size()-1;i++)
+                    {
+                        listaKierowcow.set(i,listaKierowcow.get(i+1));
+                    }
+                    listaKierowcow.set(listaKierowcow.size()-1, kierowca1);
                 }
 
             }
