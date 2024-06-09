@@ -1,32 +1,63 @@
+import javax.sound.sampled.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.*;
+import java.util.Objects;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
+    private static final double globalnaAgresywnosc = 1;
+    private static final double globalnaWartoscUlepszen = 0.25;
+    private static final double wymaganaPojemnoscPaliwa = 50;
     private static ArrayList<Kierowca> listaKierowcow = new ArrayList<>();
     private static ArrayList<Tor> listaTorow = new ArrayList<>();
     private static ArrayList<Druzyna> listaDruzyn = new ArrayList<>();
     private static ArrayList<Pojazd> listaPojazdow = new ArrayList<>();
     private static ArrayList<Mechanik> listaMechanikow = new ArrayList<>();
 
-    private static ArrayList<Integer> statystykiLiczbaWyprzedzen = new ArrayList<>();
-    public static void main(String[] args){
-        wczytajDane();
+    public static void main(String[] args) throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
+        ObslugaPlikow.wczytajDane();
 
         for(int nrWyscigu=1; nrWyscigu<=listaTorow.size(); nrWyscigu++)
         {
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
-            zapiszWyniki(listaKierowcow,"Kierowcy - Wyscig " + nrWyscigu);
-        }
-        zapiszWyniki(listaKierowcow,"Kierowcy - _Koncowe");
-    }
+            ObslugaPlikow.zapiszWyniki(false,"Okrazenia");
+            ulepszenia();
 
+        }
+
+        ObslugaPlikow.zapiszWyniki(true);
+
+        /*
+        if(Objects.equals(listaKierowcow.get(0).imie, "Max")||Objects.equals(listaKierowcow.get(0).imie, "Fernando ")||Objects.equals(listaKierowcow.get(0).imie, "Sergio")||Objects.equals(listaKierowcow.get(0).imie, "Lewis "))
+        {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Max.wav").getAbsoluteFile());;
+            if(Objects.equals(listaKierowcow.get(0).imie, "Max")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Max.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Fernando ")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Fernando.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Lewis ")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Lewis.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Sergio")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Sergio.wav").getAbsoluteFile());
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+            Thread.sleep(10000);
+        }
+         */
+    }
     private static void uruchomWyscig(Tor tor){
         System.out.println("TOR: "+tor.nazwa);
+        if(tor.czyPada) System.out.println("Bedzie dzis padac");
         System.out.println("START !!!");
+        for(Kierowca i:listaKierowcow)
+        {
+            i.czasPrzejazdu=0.0;
+            i.pojazd.stanPaliwa=wymaganaPojemnoscPaliwa;
+            i.pojazd.stanOpon=100;
+            i.statystykiOkrazenia.clear();
+            i.statystykiWyprzedzenia.add(0);
+        }
+
         for(int okrazenie=1; okrazenie<=liczbaOkrazenNaTor; okrazenie++)
         {
             System.out.println("\nOKRĄŻENIE: " + okrazenie);
@@ -37,10 +68,9 @@ public class Main {
                     przejazdKierowcy(listaKierowcow.get(i), tor, 0.0);
                 }
                 else {
-                    przejazdKierowcy(listaKierowcow.get(i), tor, listaKierowcow.get(i-1).czasPrzejazdu);
+                   przejazdKierowcy(listaKierowcow.get(i), tor, listaKierowcow.get(i-1).czasPrzejazdu);
                 }
             }
-
             for(int i=1; i<listaKierowcow.size();i++)
             {
                 wyprzedzanie(i);
@@ -49,9 +79,22 @@ public class Main {
 
         }
         System.out.println("META !!!");
+
+        //Przyznawanie punktow za miejsce w wyscigu
+        for(int i=0; i<listaKierowcow.size();i++)
+        {
+            Kierowca kierowca = listaKierowcow.get(i);
+            Integer punktyZaPozycje = listaKierowcow.size()-i;
+            if(i==0){punktyZaPozycje +=2;}
+            kierowca.punktyZaPozycje+=punktyZaPozycje;
+            kierowca.statystykiWynikow.add(i+1);
+        }
     }
-    private static void przejazdKierowcy(Kierowca kierowca, Tor tor, Double CzasPoprzednika)
+    private static void przejazdKierowcy(Kierowca kierowca, Tor tor, double CzasPoprzednika)
     {
+        if(kierowca.czasPrzejazdu < 0) return;
+
+
         kierowca.czyWPitstopie=false;
         double czasPrzejazdu = (kierowca.predkoscProsta*kierowca.pojazd.szybkosc/tor.procentProstych) + (kierowca.predkoscZakret*kierowca.pojazd.przyczepnosc/tor.procentZakretow);
         Random randTime = new Random();
@@ -65,6 +108,7 @@ public class Main {
             czasPrzejazdu += pitstop(kierowca);
         }
         kierowca.czasPrzejazdu = Math.max(kierowca.czasPrzejazdu + czasPrzejazdu, CzasPoprzednika);
+        kierowca.statystykiOkrazenia.add(kierowca.czasPrzejazdu);
     }
     private static double pitstop(Kierowca kierowca){
         double czasPitstopu = 0;
@@ -87,21 +131,70 @@ public class Main {
     {
         Kierowca kierowca1 = listaKierowcow.get(pozKierowcy-1);
         Kierowca kierowca2 = listaKierowcow.get(pozKierowcy);
+        double zamiana;
         Random wyprzedzanie = new Random();
-        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25||kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie)
+
+        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25 && kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie&&kierowca2.czasPrzejazdu!=-1)
         {
             System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
-            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble())>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble())|| kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
+            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble()*globalnaAgresywnosc)>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble()) && kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
             {
+                zamiana = kierowca2.czasPrzejazdu;
                 kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
+                kierowca1.czasPrzejazdu=zamiana;
+                kierowca2.statystykiWyprzedzenia.set(kierowca2.statystykiWyprzedzenia.size()-1,kierowca2.statystykiWyprzedzenia.get(kierowca2.statystykiWyprzedzenia.size()-1)+1);
                 listaKierowcow.set(pozKierowcy-1,kierowca2);
                 listaKierowcow.set(pozKierowcy, kierowca1);
 
                 System.out.println(kierowca2.imie + " WYPRZEDZIŁ " + kierowca1.imie);
+
+                if(kierowca2.czasPrzejazdu==kierowca1.czasPrzejazdu&&pozKierowcy>2)
+                {
+                    wyprzedzanie(pozKierowcy-1);
+                }
+
+            }
+            else if(((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*globalnaAgresywnosc))/2 > wyprzedzanie.nextDouble())
+            {
+                System.out.println(wyprzedzanie.nextDouble());
+                kierowca2.czasPrzejazdu = -1;
+                System.out.println(kierowca2.imie + " WYPADEK - KONIEC");
+                for(int i = pozKierowcy;i<listaKierowcow.size()-1;i++)
+                {
+                    listaKierowcow.set(i,listaKierowcow.get(i+1));
+                }
+                listaKierowcow.set(listaKierowcow.size()-1, kierowca2);
+                if(((kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*globalnaAgresywnosc))/5 > wyprzedzanie.nextDouble() && !kierowca1.czyWPitstopie)
+                {
+                    kierowca1.czasPrzejazdu = -1;
+                    System.out.println(kierowca1.imie + " WYPADEK - KONIEC");
+                    for(int i = pozKierowcy+1;i<listaKierowcow.size()-1;i++)
+                    {
+                        listaKierowcow.set(i,listaKierowcow.get(i+1));
+                    }
+                    listaKierowcow.set(listaKierowcow.size()-1, kierowca1);
+                }
+
             }
         }
 
     }
+
+
+    private static void ulepszenia()
+    {
+        double ulepszenieMechanikow = globalnaWartoscUlepszen/20;
+        double ulepszeniePojazdow = globalnaWartoscUlepszen/10;
+        double ulepszenieKierowcow = globalnaWartoscUlepszen/5;
+
+        for(Kierowca i:listaKierowcow)
+        {
+            i.ulepszStatystyki(ulepszenieKierowcow);
+            i.pojazd.ulepszStatystyki(ulepszeniePojazdow);
+            i.pojazd.mechanik.ulepszStatystyki(ulepszenieMechanikow);
+        }
+    }
+
 
     private static void pokazWyniki() {
         for (Kierowca kierowca : listaKierowcow) {
@@ -109,96 +202,20 @@ public class Main {
             System.out.println();
         }
     }
-    private static void zapiszWyniki(ArrayList <Kierowca> dane, String nazwaPliku) {
-        File plik = new File("Wyniki/"+nazwaPliku+".csv");
-        try (PrintWriter printWriter = new PrintWriter(plik)) {
-            printWriter.println("Imie;Nazwisko;Czas");
-            for(Kierowca i:dane)
-            {
-                String[] danee = new String[3];
-                danee[0]=i.imie;
-                danee[1]=i.nazwisko;
-                danee[2]= String.valueOf(i.czasPrzejazdu);
-                printWriter.println(daneNaLinieCSV(danee));
-            }
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        //assertTrue(plik.exists());
-    }
-
-    private static List<String> liniaCSVnaDane(String linia) {
-        List<String> wartosci = new ArrayList<>();
-        try (Scanner scanner = new Scanner(linia)) {
-            scanner.useDelimiter(";");
-            while (scanner.hasNext()) {
-                wartosci.add(scanner.next());
-            }
-        }
-        return wartosci;
-    }
-    private static String daneNaLinieCSV(String[] dane) {
-        return String.join(";", dane);
-    }
-    private static List<List<String>> odczytPliku(String sciezka)
+    public static void setterDanych(ArrayList<Kierowca> inKierowca, ArrayList<Tor> inTor, ArrayList<Druzyna> inDruzyna, ArrayList<Pojazd> inPojazd, ArrayList<Mechanik> inMechanik)
     {
-        List<List<String>> zwrotDanych = new ArrayList<>();
-        try (Scanner scannerDruzyn = new Scanner(new File(sciezka))) {
-            while (scannerDruzyn.hasNextLine()) {
-                zwrotDanych.add(liniaCSVnaDane(scannerDruzyn.nextLine()));
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        zwrotDanych.remove(0); //Usuwa naglowki
-        return zwrotDanych;
+        listaKierowcow=inKierowca;
+        listaTorow=inTor;
+        listaDruzyn=inDruzyna;
+        listaPojazdow=inPojazd;
+        listaMechanikow=inMechanik;
     }
-    private static void wczytajDane(){
-        String sciezkaDaneDruzyn = "DaneStartowe/Druzyna.csv";
-        String sciezkaDaneMechanikow = "DaneStartowe/Mechanik.csv";
-        String sciezkaDanePojazdow = "DaneStartowe/Pojazd.csv";
-        String sciezkaDaneKierowcow = "DaneStartowe/Kierowca.csv";
-        String sciezkaDaneTorow = "DaneStartowe/Tor.csv";
-
-        //Wczytuje druzyny
-        for (List<String> druzynaInput : odczytPliku(sciezkaDaneDruzyn)) {
-            Druzyna druzyna = new Druzyna(druzynaInput.get(0));
-            listaDruzyn.add(druzyna);
-        }
-
-        //Wczytuje mechanikow
-        for (List<String> mechanikInput : odczytPliku(sciezkaDaneMechanikow)) {
-            Mechanik mechanik = new Mechanik(
-                    listaDruzyn.get(Integer.parseInt(mechanikInput.get(0))-1),
-                    mechanikInput
-            );
-            listaMechanikow.add(mechanik);
-        }
-
-        //Wczytuje pojazdy
-        for (List<String> pojazdInput : odczytPliku(sciezkaDanePojazdow)) {
-            Pojazd pojazd = new Pojazd(
-                    listaMechanikow.get(Integer.parseInt(pojazdInput.get(1))-1),
-                    pojazdInput
-            );
-            listaPojazdow.add(pojazd);
-        }
-
-        //Wczytuje kierowcow
-        for (List<String> kierowcaInput : odczytPliku(sciezkaDaneKierowcow)) {
-            Kierowca kierowca = new Kierowca(
-                    listaDruzyn.get(Integer.parseInt(kierowcaInput.get(0))-1),
-                    listaPojazdow.get(Integer.parseInt(kierowcaInput.get(5))-1),
-                    kierowcaInput
-            );
-            listaKierowcow.add(kierowca);
-        }
-
-        //Wczytuje tory
-        for (List<String> torInput : odczytPliku(sciezkaDaneTorow)) {
-            Tor tor = new Tor(torInput);
-            listaTorow.add(tor);
-        }
+    public static ArrayList<Kierowca> getListaKierowcow(){
+        return listaKierowcow;
     }
+    public static Integer getIloscTorow()
+    {
+        return listaTorow.size();
+    }
+
 }
