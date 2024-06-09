@@ -4,30 +4,31 @@ import java.util.Random;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
-    private static final double globalnaAgresywnosc = 0.3;//0.05  ;
-    private static final double globalnaWartoscUlepszen = 0.25;//0.25;
-    private static final double wymaganaPojemnoscPaliwa = 50;//50
+    private static final double globalnaAgresywnosc = 0.03;//Standardowa: 0.03
+    private static final double globalnaWartoscUlepszen = 0.25;//Standardowa: 0.25
+    private static final double wymaganaPojemnoscPaliwa = 50;//Standardowa: 50
     private static ArrayList<Kierowca> listaKierowcow = new ArrayList<>();
     private static ArrayList<Tor> listaTorow = new ArrayList<>();
 
     public static void main(String[] args) {
         ObslugaPlikow.wczytajDane();
-
         for(int nrWyscigu=1; nrWyscigu<=listaTorow.size(); nrWyscigu++)
         {
             System.out.println("Wyscig nr: " + String.valueOf(nrWyscigu));
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
-            ObslugaPlikow.zapiszWyniki(false,"Okrazenia");
-            ulepszenia();
-            Collections.reverse(listaKierowcow); //Ostatnie lokaty zaczynaja kolejny wyscig na przodzie
+            ObslugaPlikow.zapiszWyniki(false,"Okrazenia"); //Zapisuje dane na temat i-go wyscigu
+            if(nrWyscigu<listaTorow.size()) ulepszenia();//Dokonuje wszystkich ulepszen
+            Collections.reverse(listaKierowcow); //Zamienia kierowcow kolejnoscia by ostatni zaczynali na przodzie itd.
         }
-
         ObslugaPlikow.zapiszWyniki(true);
     }
+
+    //Przeprowadza jeden wyscig na podanym torze
     private static void uruchomWyscig(Tor tor){
         System.out.println("TOR: "+tor.nazwa);
         if(tor.czyPada) System.out.println("Bedzie dzis padac");
         System.out.println("START !!!");
+        //Ustawianie domyslnych stanow kierowcow
         for(Kierowca i:listaKierowcow)
         {
             i.czasPrzejazdu=0.0;
@@ -39,9 +40,11 @@ public class Main {
             i.statystykiWyprzedzenia.add(0);
         }
 
+        //Przeprowadzie okrazenia po okrazeniu
         for(int okrazenie=1; okrazenie<=liczbaOkrazenNaTor; okrazenie++)
         {
             System.out.println("\nOKRĄŻENIE: " + okrazenie);
+            //Przejazdy kazdego z kolei kierowcy
             for(int i=0; i<listaKierowcow.size();i++)
             {
                 if(i==0)
@@ -52,6 +55,7 @@ public class Main {
                    przejazdKierowcy(listaKierowcow.get(i), tor, listaKierowcow.get(i-1).czasPrzejazdu);
                 }
             }
+            //Wyprzedzanie kazdej kolejnej pary kierowcow
             for(int i=1; i<listaKierowcow.size();i++)
             {
                 wyprzedzanie(i);
@@ -61,11 +65,11 @@ public class Main {
         System.out.println("KONIEC WYSCIGU");
         pokazWyniki();
 
-        //Przyznawanie punktow za miejsce w wyscigu
+        //Przyznawanie punktow za miejsce po wyscigu
         for(int i=0; i<listaKierowcow.size();i++)
         {
             Kierowca kierowca = listaKierowcow.get(i);
-            Integer punktyZaPozycje = listaKierowcow.size()-i;
+            int punktyZaPozycje = listaKierowcow.size()-i;
             if(i==0){punktyZaPozycje +=2;}
             if(listaKierowcow.get(i).czyEliminacja)
             {
@@ -76,6 +80,8 @@ public class Main {
             kierowca.statystykiWynikow.add(String.valueOf(i+1));
         }
     }
+
+    //Oblicza czas przejazdu kolejnego okrazenia dla podanego kierowcy
     private static void przejazdKierowcy(Kierowca kierowca, Tor tor, double CzasPoprzednika)
     {
         if(kierowca.czyEliminacja) return;
@@ -89,6 +95,7 @@ public class Main {
         czasPrzejazdu = tor.dlugosc/czasPrzejazdu;
         kierowca.pojazd.stanPaliwa = kierowca.pojazd.stanPaliwa - (czasPrzejazdu/kierowca.ekonomicznoscJazdy);
         kierowca.pojazd.stanOpon = kierowca.pojazd.stanOpon -(czasPrzejazdu/kierowca.ekonomicznoscJazdy*kierowca.pojazd.przyczepnosc);
+        //Warunek konieczny na skorzystanie z pitstopu
         if(kierowca.pojazd.stanPaliwa < 5 || kierowca.pojazd.stanOpon < 10 ) {
             kierowca.czyWPitstopie=true;
             czasPrzejazdu += pitstop(kierowca);
@@ -96,6 +103,8 @@ public class Main {
         kierowca.czasPrzejazdu = Math.max(kierowca.czasPrzejazdu + czasPrzejazdu, CzasPoprzednika);
         kierowca.statystykiOkrazenia.add(kierowca.czasPrzejazdu);
     }
+
+    //Oblicza czas pitstopu kierowcy
     private static double pitstop(Kierowca kierowca){
         double czasPitstopu = 0;
         Random czas = new Random();
@@ -113,6 +122,7 @@ public class Main {
         return czasPitstopu;
     }
 
+    //Oblicza mozliwosc i rezultat wyprzedzania miedzy sasiadujaca para kierowcow
     private static void wyprzedzanie(int pozKierowcy)
     {
         Kierowca kierowca1 = listaKierowcow.get(pozKierowcy-1);
@@ -126,11 +136,7 @@ public class Main {
         //Jesli spelnione to podjeta jest proba wyprzedzania
 
         //Warunki natychmiastowego wyprzedzenia
-        boolean czyNatychmiastWyprzedza=false;
-        if(kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie)
-        {
-            czyNatychmiastWyprzedza=true;
-        }
+        boolean czyNatychmiastWyprzedza = kierowca1.czyWPitstopie;
 
         //Warunki rezultatu: UDANE WYPRZEDZENIE
         if(czyNatychmiastWyprzedza||(kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wartoscLosowaWyprzedzenia.nextDouble()*globalnaAgresywnosc)>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wartoscLosowaWyprzedzenia.nextDouble()))
@@ -181,6 +187,7 @@ public class Main {
     }
 
 
+    //Dokonuje wszystkich ulepszen
     private static void ulepszenia()
     {
         double ulepszenieMechanikow = globalnaWartoscUlepszen/20;
@@ -195,7 +202,7 @@ public class Main {
         }
     }
 
-
+    //Wyswietla wyniki w konsoli
     private static void pokazWyniki() {
         System.out.print("Podium: ");
         for(int i=0; i<Math.min(3,listaKierowcow.size());i++)
@@ -204,11 +211,14 @@ public class Main {
         }
         System.out.println("\n");
     }
+    //Pozwala zinicjalizowac dane
     public static void setterDanych(ArrayList<Kierowca> inKierowca, ArrayList<Tor> inTor)
     {
         listaKierowcow=inKierowca;
         listaTorow=inTor;
     }
+
+    //Pozwala zapisac dane
     public static ArrayList<Kierowca> getListaKierowcow(){
         return listaKierowcow;
     }

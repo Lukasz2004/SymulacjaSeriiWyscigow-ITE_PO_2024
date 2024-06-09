@@ -9,6 +9,16 @@ public class Pojazd implements Ulepszenie {
     public double stanPaliwa;
     public double stanOpon;
 
+    //Dokonuje ulepszen parametrow pomiedzy wyscigami
+    @Override
+    public void ulepszStatystyki(double wartosc) {
+        Random ulepszenie = new Random();
+        int wybor;
+        wybor = ulepszenie.nextInt(2);
+        if(wybor == 0) this.szybkosc += wartosc;
+        if(wybor == 1) this.przyczepnosc += wartosc;
+    }
+
     public Pojazd (Mechanik mechanik, List<String> dane)
     {
         this.nazwa = dane.get(0);
@@ -30,12 +40,4 @@ public class Pojazd implements Ulepszenie {
 
     }
 
-    @Override
-    public void ulepszStatystyki(double wartosc) {
-        Random ulepszenie = new Random();
-        int wybor;
-        wybor = ulepszenie.nextInt(2);
-        if(wybor == 0) this.szybkosc += wartosc;
-        if(wybor == 1) this.przyczepnosc += wartosc;
-    }
 }

@@ -21,6 +21,7 @@ public class Kierowca extends Personel implements Ulepszenie {
     public ArrayList<Integer> statystykiWyprzedzenia=new ArrayList<>();
     public int punktyZaPozycje=0;
 
+    //Dokonuje ulepszen parametrow pomiedzy wyscigami
     @Override
     public void ulepszStatystyki(double wartosc) {
         Random ulepszenie = new Random();

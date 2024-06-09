@@ -9,7 +9,8 @@ public class Tor {
     private double szansaNaDeszcz;
     public boolean czyPada;
 
-    public boolean warunkiPogodowe(){
+    //Oblicza czy na danym torze spadnie deszcz
+    private boolean warunkiPogodowe(){
         Random deszcz = new Random();
         if (deszcz.nextDouble() < szansaNaDeszcz) {
             return true;
@@ -17,6 +18,8 @@ public class Tor {
         else
             return false;
     }
+
+
     public Tor(List<String> dane) {
         this.nazwa = dane.get(0);
         this.dlugosc = Double.parseDouble(dane.get(1));

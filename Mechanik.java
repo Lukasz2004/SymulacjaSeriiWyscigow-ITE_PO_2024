@@ -2,6 +2,13 @@ import java.util.List;
 
 public class Mechanik extends Personel implements Ulepszenie{
     public double szybkosc;
+
+    //Dokonuje ulepszen parametrow pomiedzy wyscigami
+    @Override
+    public void ulepszStatystyki(double wartosc) {
+        this.szybkosc += wartosc;
+    }
+
     public Mechanik(Druzyna druzyna, List<String> dane) {
         this.druzyna = druzyna;
         this.imie = dane.get(1);
@@ -9,10 +16,5 @@ public class Mechanik extends Personel implements Ulepszenie{
         this.narodowosc = dane.get(3);
         this.wiek = Integer.parseInt(dane.get(4));
         this.szybkosc = Double.parseDouble(dane.get(5));
-    }
-
-    @Override
-    public void ulepszStatystyki(double wartosc) {
-        this.szybkosc += wartosc;
     }
 }
