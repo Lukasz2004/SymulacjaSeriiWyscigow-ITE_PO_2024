@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
-    private static final double globalnaAgresywnosc = 0.25;
+    private static final double globalnaAgresywnosc = 1;
     private static final double globalnaWartoscUlepszen = 0.25;
     private static final double wymaganaPojemnoscPaliwa = 50;
     private static ArrayList<Kierowca> listaKierowcow = new ArrayList<>();
@@ -133,7 +133,7 @@ public class Main {
         if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25||kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie)
         {
             System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
-            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble())>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble())|| kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
+            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble()*globalnaAgresywnosc)>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble()) && kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
             {
                 zamiana = kierowca2.czasPrzejazdu;
                 kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
