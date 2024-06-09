@@ -28,6 +28,18 @@ public class Main {
         }
 
         ObslugaPlikow.zapiszWyniki(true);
+        if(Objects.equals(listaKierowcow.get(0).imie, "Max")||Objects.equals(listaKierowcow.get(0).imie, "Fernando ")||Objects.equals(listaKierowcow.get(0).imie, "Sergio")||Objects.equals(listaKierowcow.get(0).imie, "Lewis "))
+        {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Max.wav").getAbsoluteFile());;
+            if(Objects.equals(listaKierowcow.get(0).imie, "Max")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Max.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Fernando ")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Fernando.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Lewis ")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Lewis.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Sergio")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Sergio.wav").getAbsoluteFile());
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+            Thread.sleep(10000);
+        }
     }
     private static void uruchomWyscig(Tor tor){
         System.out.println("TOR: "+tor.nazwa);
