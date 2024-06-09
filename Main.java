@@ -1,30 +1,25 @@
-import javax.sound.sampled.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
-import java.util.Objects;
-
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
-    private static final double globalnaAgresywnosc = 0.05;//0.05  ;
+    private static final double globalnaAgresywnosc = 0.3;//0.05  ;
     private static final double globalnaWartoscUlepszen = 0.25;//0.25;
-    private static final double wymaganaPojemnoscPaliwa = 10;//50
+    private static final double wymaganaPojemnoscPaliwa = 50;//50
     private static ArrayList<Kierowca> listaKierowcow = new ArrayList<>();
     private static ArrayList<Tor> listaTorow = new ArrayList<>();
 
-    public static void main(String[] args) throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
+    public static void main(String[] args) {
         ObslugaPlikow.wczytajDane();
 
         for(int nrWyscigu=1; nrWyscigu<=listaTorow.size(); nrWyscigu++)
         {
+            System.out.println("Wyscig nr: " + String.valueOf(nrWyscigu));
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
             ObslugaPlikow.zapiszWyniki(false,"Okrazenia");
             ulepszenia();
-            Collections.reverse(listaKierowcow);
-
+            Collections.reverse(listaKierowcow); //Ostatnie lokaty zaczynaja kolejny wyscig na przodzie
         }
 
         ObslugaPlikow.zapiszWyniki(true);
@@ -61,10 +56,10 @@ public class Main {
             {
                 wyprzedzanie(i);
             }
-            pokazWyniki();
 
         }
-        System.out.println("META !!!");
+        System.out.println("KONIEC WYSCIGU");
+        pokazWyniki();
 
         //Przyznawanie punktow za miejsce w wyscigu
         for(int i=0; i<listaKierowcow.size();i++)
@@ -72,7 +67,7 @@ public class Main {
             Kierowca kierowca = listaKierowcow.get(i);
             Integer punktyZaPozycje = listaKierowcow.size()-i;
             if(i==0){punktyZaPozycje +=2;}
-            if(listaKierowcow.get(i).czyEliminacja==true)
+            if(listaKierowcow.get(i).czyEliminacja)
             {
                 kierowca.statystykiWynikow.add("DNF");
                 continue;
@@ -129,7 +124,6 @@ public class Main {
             return;
         }
         //Jesli spelnione to podjeta jest proba wyprzedzania
-        System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
 
         //Warunki natychmiastowego wyprzedzenia
         boolean czyNatychmiastWyprzedza=false;
@@ -203,10 +197,12 @@ public class Main {
 
 
     private static void pokazWyniki() {
-        for (Kierowca kierowca : listaKierowcow) {
-            System.out.print("CZAS: " + kierowca.imie + " " + kierowca.czasPrzejazdu);
-            System.out.println();
+        System.out.print("Podium: ");
+        for(int i=0; i<Math.min(3,listaKierowcow.size());i++)
+        {
+            System.out.print(String.valueOf(i+1)+":" + listaKierowcow.get(i).imie + ", ");
         }
+        System.out.println("\n");
     }
     public static void setterDanych(ArrayList<Kierowca> inKierowca, ArrayList<Tor> inTor)
     {
