@@ -1,6 +1,7 @@
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Objects;
 
 import java.util.ArrayList;
@@ -8,14 +9,11 @@ import java.util.Random;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
-    private static final double globalnaAgresywnosc = 1;
-    private static final double globalnaWartoscUlepszen = 0.25;
-    private static final double wymaganaPojemnoscPaliwa = 50;
+    private static final double globalnaAgresywnosc = 0.05;//0.05  ;
+    private static final double globalnaWartoscUlepszen = 0.25;//0.25;
+    private static final double wymaganaPojemnoscPaliwa = 10;//50
     private static ArrayList<Kierowca> listaKierowcow = new ArrayList<>();
     private static ArrayList<Tor> listaTorow = new ArrayList<>();
-    private static ArrayList<Druzyna> listaDruzyn = new ArrayList<>();
-    private static ArrayList<Pojazd> listaPojazdow = new ArrayList<>();
-    private static ArrayList<Mechanik> listaMechanikow = new ArrayList<>();
 
     public static void main(String[] args) throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
         ObslugaPlikow.wczytajDane();
@@ -25,25 +23,11 @@ public class Main {
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
             ObslugaPlikow.zapiszWyniki(false,"Okrazenia");
             ulepszenia();
+            Collections.reverse(listaKierowcow);
 
         }
 
         ObslugaPlikow.zapiszWyniki(true);
-
-        /*
-        if(Objects.equals(listaKierowcow.get(0).imie, "Max")||Objects.equals(listaKierowcow.get(0).imie, "Fernando ")||Objects.equals(listaKierowcow.get(0).imie, "Sergio")||Objects.equals(listaKierowcow.get(0).imie, "Lewis "))
-        {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Max.wav").getAbsoluteFile());;
-            if(Objects.equals(listaKierowcow.get(0).imie, "Max")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Max.wav").getAbsoluteFile());
-            if(Objects.equals(listaKierowcow.get(0).imie, "Fernando ")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Fernando.wav").getAbsoluteFile());
-            if(Objects.equals(listaKierowcow.get(0).imie, "Lewis ")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Lewis.wav").getAbsoluteFile());
-            if(Objects.equals(listaKierowcow.get(0).imie, "Sergio")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Sergio.wav").getAbsoluteFile());
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-            Thread.sleep(10000);
-        }
-         */
     }
     private static void uruchomWyscig(Tor tor){
         System.out.println("TOR: "+tor.nazwa);
@@ -54,6 +38,8 @@ public class Main {
             i.czasPrzejazdu=0.0;
             i.pojazd.stanPaliwa=wymaganaPojemnoscPaliwa;
             i.pojazd.stanOpon=100;
+            i.czyWPitstopie=false;
+            i.czyEliminacja=false;
             i.statystykiOkrazenia.clear();
             i.statystykiWyprzedzenia.add(0);
         }
@@ -86,13 +72,18 @@ public class Main {
             Kierowca kierowca = listaKierowcow.get(i);
             Integer punktyZaPozycje = listaKierowcow.size()-i;
             if(i==0){punktyZaPozycje +=2;}
+            if(listaKierowcow.get(i).czyEliminacja==true)
+            {
+                kierowca.statystykiWynikow.add("DNF");
+                continue;
+            }
             kierowca.punktyZaPozycje+=punktyZaPozycje;
-            kierowca.statystykiWynikow.add(i+1);
+            kierowca.statystykiWynikow.add(String.valueOf(i+1));
         }
     }
     private static void przejazdKierowcy(Kierowca kierowca, Tor tor, double CzasPoprzednika)
     {
-        if(kierowca.czasPrzejazdu < 0) return;
+        if(kierowca.czyEliminacja) return;
 
 
         kierowca.czyWPitstopie=false;
@@ -131,51 +122,66 @@ public class Main {
     {
         Kierowca kierowca1 = listaKierowcow.get(pozKierowcy-1);
         Kierowca kierowca2 = listaKierowcow.get(pozKierowcy);
-        double zamiana;
-        Random wyprzedzanie = new Random();
-
-        if(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25 && kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie&&kierowca2.czasPrzejazdu!=-1)
+        Random wartoscLosowaWyprzedzenia = new Random();
+        //Warunki konieczne do zajscia wyprzedzenia:
+        if(kierowca2.czyEliminacja || kierowca2.czyWPitstopie || !(kierowca2.czasPrzejazdu-kierowca1.czasPrzejazdu<0.25))
         {
-            System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
-            if((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wyprzedzanie.nextDouble()*globalnaAgresywnosc)>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wyprzedzanie.nextDouble()) && kierowca1.czyWPitstopie && !kierowca2.czyWPitstopie)
+            return;
+        }
+        //Jesli spelnione to podjeta jest proba wyprzedzania
+        System.out.println(kierowca2.imie+" zaczyna wyprzedzac ");
+
+        //Warunki natychmiastowego wyprzedzenia
+        boolean czyNatychmiastWyprzedza=false;
+        if(kierowca1.czyWPitstopie&&!kierowca2.czyWPitstopie)
+        {
+            czyNatychmiastWyprzedza=true;
+        }
+
+        //Warunki rezultatu: UDANE WYPRZEDZENIE
+        if(czyNatychmiastWyprzedza||(kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*wartoscLosowaWyprzedzenia.nextDouble()*globalnaAgresywnosc)>(kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*wartoscLosowaWyprzedzenia.nextDouble()))
+        {
+            double zamiana;
+            zamiana = kierowca2.czasPrzejazdu;
+            kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
+            kierowca1.czasPrzejazdu=zamiana;
+            kierowca2.statystykiWyprzedzenia.set(kierowca2.statystykiWyprzedzenia.size()-1,kierowca2.statystykiWyprzedzenia.get(kierowca2.statystykiWyprzedzenia.size()-1)+1);
+            listaKierowcow.set(pozKierowcy-1,kierowca2);
+            listaKierowcow.set(pozKierowcy, kierowca1);
+
+            System.out.println(kierowca2.imie + " WYPRZEDZIŁ " + kierowca1.imie);
+
+            if(kierowca2.czasPrzejazdu==kierowca1.czasPrzejazdu&&pozKierowcy>2) //Kierowca ktory wyprzedzil podejmuje sie wyprzedzenia kolejnego
             {
-                zamiana = kierowca2.czasPrzejazdu;
-                kierowca2.czasPrzejazdu=kierowca1.czasPrzejazdu;
-                kierowca1.czasPrzejazdu=zamiana;
-                kierowca2.statystykiWyprzedzenia.set(kierowca2.statystykiWyprzedzenia.size()-1,kierowca2.statystykiWyprzedzenia.get(kierowca2.statystykiWyprzedzenia.size()-1)+1);
-                listaKierowcow.set(pozKierowcy-1,kierowca2);
-                listaKierowcow.set(pozKierowcy, kierowca1);
-
-                System.out.println(kierowca2.imie + " WYPRZEDZIŁ " + kierowca1.imie);
-
-                if(kierowca2.czasPrzejazdu==kierowca1.czasPrzejazdu&&pozKierowcy>2)
-                {
-                    wyprzedzanie(pozKierowcy-1);
-                }
-
+                wyprzedzanie(pozKierowcy-1);
             }
-            else if(((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*globalnaAgresywnosc))/2 > wyprzedzanie.nextDouble())
+
+        }
+        //Warunki rezultatu: AWARIA WYPRZEDZAJACEGO
+        else if(((kierowca2.umiejetnoscWyprzedania*kierowca2.agresywnosc*globalnaAgresywnosc))/2 > wartoscLosowaWyprzedzenia.nextDouble())
+        {
+            kierowca2.czasPrzejazdu = -1;
+            kierowca2.czyEliminacja = true;
+            System.out.println(kierowca2.imie + " WYPADEK - KONIEC");
+            for(int i = pozKierowcy;i<listaKierowcow.size()-1;i++)
             {
-                System.out.println(wyprzedzanie.nextDouble());
-                kierowca2.czasPrzejazdu = -1;
-                System.out.println(kierowca2.imie + " WYPADEK - KONIEC");
-                for(int i = pozKierowcy;i<listaKierowcow.size()-1;i++)
+                listaKierowcow.set(i,listaKierowcow.get(i+1));
+            }
+            listaKierowcow.set(listaKierowcow.size()-1, kierowca2);
+
+            //Warunki rezultatu: ZDERZENIE OBU POJAZDOW
+            if(((kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*globalnaAgresywnosc))/5 > wartoscLosowaWyprzedzenia.nextDouble() && !kierowca1.czyWPitstopie)
+            {
+                kierowca1.czasPrzejazdu = -1;
+                kierowca1.czyEliminacja = true;
+                System.out.println(kierowca1.imie + " WYPADEK - KONIEC");
+                for(int i = pozKierowcy-1;i<listaKierowcow.size()-1;i++)
                 {
                     listaKierowcow.set(i,listaKierowcow.get(i+1));
                 }
-                listaKierowcow.set(listaKierowcow.size()-1, kierowca2);
-                if(((kierowca1.umiejetnoscObrony*kierowca1.agresywnosc*globalnaAgresywnosc))/5 > wyprzedzanie.nextDouble() && !kierowca1.czyWPitstopie)
-                {
-                    kierowca1.czasPrzejazdu = -1;
-                    System.out.println(kierowca1.imie + " WYPADEK - KONIEC");
-                    for(int i = pozKierowcy+1;i<listaKierowcow.size()-1;i++)
-                    {
-                        listaKierowcow.set(i,listaKierowcow.get(i+1));
-                    }
-                    listaKierowcow.set(listaKierowcow.size()-1, kierowca1);
-                }
-
+                listaKierowcow.set(listaKierowcow.size()-1, kierowca1);
             }
+
         }
 
     }
@@ -202,13 +208,10 @@ public class Main {
             System.out.println();
         }
     }
-    public static void setterDanych(ArrayList<Kierowca> inKierowca, ArrayList<Tor> inTor, ArrayList<Druzyna> inDruzyna, ArrayList<Pojazd> inPojazd, ArrayList<Mechanik> inMechanik)
+    public static void setterDanych(ArrayList<Kierowca> inKierowca, ArrayList<Tor> inTor)
     {
         listaKierowcow=inKierowca;
         listaTorow=inTor;
-        listaDruzyn=inDruzyna;
-        listaPojazdow=inPojazd;
-        listaMechanikow=inMechanik;
     }
     public static ArrayList<Kierowca> getListaKierowcow(){
         return listaKierowcow;

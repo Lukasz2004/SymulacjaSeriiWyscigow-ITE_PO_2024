@@ -13,9 +13,10 @@ public class Kierowca extends Personel implements Ulepszenie {
     public double ekonomicznoscJazdy;
     public double czasPrzejazdu;
     public boolean czyWPitstopie;
+    public boolean czyEliminacja;
 
     public ArrayList<Double> statystykiOkrazenia=new ArrayList<>();
-    public ArrayList<Integer> statystykiWynikow=new ArrayList<>();
+    public ArrayList<String> statystykiWynikow=new ArrayList<>();
     public ArrayList<Integer> statystykiWyprzedzenia=new ArrayList<>();
     public int punktyZaPozycje=0;
 

@@ -61,7 +61,7 @@ public class ObslugaPlikow {
             listaTorow.add(tor);
         }
 
-        Main.setterDanych(listaKierowcow,listaTorow,listaDruzyn,listaPojazdow,listaMechanikow);
+        Main.setterDanych(listaKierowcow,listaTorow);
     }
     private static List<List<String>> odczytPliku(String sciezka)
     {
@@ -138,9 +138,9 @@ public class ObslugaPlikow {
                 ArrayList<String> arrayDanowy = new ArrayList<>();
                 arrayDanowy.add(kierowca.imie);
                 arrayDanowy.add(kierowca.nazwisko);
-                for(Integer i:kierowca.statystykiWynikow)
+                for(String i:kierowca.statystykiWynikow)
                 {
-                    arrayDanowy.add(String.valueOf(i));
+                    arrayDanowy.add(i);
                 }
                 arrayDanowy.add(String.valueOf(kierowca.punktyZaPozycje));
                 arrayWynikowy.add(arrayDanowy);
@@ -188,6 +188,11 @@ public class ObslugaPlikow {
             arrayNaglowki.add("Szybkosc pojazdu");
             arrayNaglowki.add("Przyczepnosc pojazdu");
             arrayNaglowki.add("Predkosc mechanika");
+            arrayNaglowki.add("Punktow w koncowym zestawieniu");
+            arrayNaglowki.add("Parametry personalne");
+            arrayNaglowki.add("Parametry wyprzedzania");
+            arrayNaglowki.add("Parametry wytrzymalosciowe");
+            arrayNaglowki.add("Parametry pojazdu");
             arrayWynikowy.add(arrayNaglowki);
 
             for(Kierowca kierowca : listaKierowcow)
@@ -195,18 +200,23 @@ public class ObslugaPlikow {
                 ArrayList<String> arrayDanowy = new ArrayList<>();
                 arrayDanowy.add(kierowca.imie);
                 arrayDanowy.add(kierowca.nazwisko);
-                arrayDanowy.add(String.valueOf(kierowca.predkoscProsta));
-                arrayDanowy.add(String.valueOf(kierowca.predkoscZakret));
-                arrayDanowy.add(String.valueOf(kierowca.umiejetnoscWyprzedania));
-                arrayDanowy.add(String.valueOf(kierowca.umiejetnoscObrony));
-                arrayDanowy.add(String.valueOf(kierowca.agresywnosc));
-                arrayDanowy.add(String.valueOf(kierowca.adaptacjaPogoda));
-                arrayDanowy.add(String.valueOf(kierowca.ekonomicznoscJazdy));
+                arrayDanowy.add(String.format("%.2f", kierowca.predkoscProsta));
+                arrayDanowy.add(String.format("%.2f", kierowca.predkoscZakret));
+                arrayDanowy.add(String.format("%.2f", kierowca.umiejetnoscWyprzedania));
+                arrayDanowy.add(String.format("%.2f", kierowca.umiejetnoscObrony));
+                arrayDanowy.add(String.format("%.2f", kierowca.agresywnosc));
+                arrayDanowy.add(String.format("%.2f", kierowca.adaptacjaPogoda));
+                arrayDanowy.add(String.format("%.2f", kierowca.ekonomicznoscJazdy));
 
-                arrayDanowy.add(String.valueOf(kierowca.pojazd.szybkosc));
-                arrayDanowy.add(String.valueOf(kierowca.pojazd.przyczepnosc));
+                arrayDanowy.add(String.format("%.2f", kierowca.pojazd.szybkosc));
+                arrayDanowy.add(String.format("%.2f", kierowca.pojazd.przyczepnosc));
 
-                arrayDanowy.add(String.valueOf(kierowca.pojazd.mechanik.szybkosc));
+                arrayDanowy.add(String.format("%.2f", kierowca.pojazd.mechanik.szybkosc));
+                arrayDanowy.add(String.valueOf(kierowca.punktyZaPozycje));
+                arrayDanowy.add(String.format("%.2f", kierowca.predkoscProsta* kierowca.predkoscZakret*kierowca.adaptacjaPogoda));
+                arrayDanowy.add(String.format("%.2f", kierowca.umiejetnoscWyprzedania* kierowca.umiejetnoscObrony* kierowca.agresywnosc));
+                arrayDanowy.add(String.format("%.2f", kierowca.ekonomicznoscJazdy*kierowca.pojazd.mechanik.szybkosc));
+                arrayDanowy.add(String.format("%.2f", kierowca.pojazd.szybkosc*kierowca.pojazd.przyczepnosc));
                 arrayWynikowy.add(arrayDanowy);
             }
             zapisPliku(arrayWynikowy,"_UmiejetnosciKierowcowPoSezonie");
@@ -231,6 +241,10 @@ public class ObslugaPlikow {
                 for(Double ii:kierowca.statystykiOkrazenia)
                 {
                     arrayDanowy.add(String.valueOf(ii));
+                }
+                for(int ii=arrayDanowy.size()+1;ii<arrayNaglowki.size();ii++)
+                {
+                    arrayDanowy.add("DNF");
                 }
                 arrayDanowy.add(String.valueOf(i+1));
                 arrayWynikowy.add(arrayDanowy);
