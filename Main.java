@@ -1,23 +1,48 @@
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Main {
     private static final int liczbaOkrazenNaTor = 50;
+    private static final double globalnaAgresywnosc = 0.25;
+    private static final double globalnaWartoscUlepszen = 0.25;
+    private static final double wymaganaPojemnoscPaliwa = 50;
     private static ArrayList<Kierowca> listaKierowcow = new ArrayList<>();
     private static ArrayList<Tor> listaTorow = new ArrayList<>();
     private static ArrayList<Druzyna> listaDruzyn = new ArrayList<>();
     private static ArrayList<Pojazd> listaPojazdow = new ArrayList<>();
     private static ArrayList<Mechanik> listaMechanikow = new ArrayList<>();
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
         ObslugaPlikow.wczytajDane();
 
         for(int nrWyscigu=1; nrWyscigu<=listaTorow.size(); nrWyscigu++)
         {
             uruchomWyscig(listaTorow.get(nrWyscigu - 1));
             ObslugaPlikow.zapiszWyniki(false,"Okrazenia");
+
         }
+
         ObslugaPlikow.zapiszWyniki(true);
+
+        /*
+        if(Objects.equals(listaKierowcow.get(0).imie, "Max")||Objects.equals(listaKierowcow.get(0).imie, "Fernando ")||Objects.equals(listaKierowcow.get(0).imie, "Sergio")||Objects.equals(listaKierowcow.get(0).imie, "Lewis "))
+        {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Max.wav").getAbsoluteFile());;
+            if(Objects.equals(listaKierowcow.get(0).imie, "Max")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Max.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Fernando ")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Fernando.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Lewis ")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Lewis.wav").getAbsoluteFile());
+            if(Objects.equals(listaKierowcow.get(0).imie, "Sergio")) audioInputStream = AudioSystem.getAudioInputStream(new File("Dzwiek/Sergio.wav").getAbsoluteFile());
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+            Thread.sleep(10000);
+        }
+         */
     }
     private static void uruchomWyscig(Tor tor){
         System.out.println("TOR: "+tor.nazwa);
@@ -26,7 +51,7 @@ public class Main {
         for(Kierowca i:listaKierowcow)
         {
             i.czasPrzejazdu=0.0;
-            i.pojazd.stanPaliwa=50;
+            i.pojazd.stanPaliwa=wymaganaPojemnoscPaliwa;
             i.pojazd.stanOpon=100;
             i.statystykiOkrazenia.clear();
             i.statystykiWyprzedzenia.add(0);
@@ -61,6 +86,8 @@ public class Main {
             kierowca.punktyZaPozycje+=punktyZaPozycje;
             kierowca.statystykiWynikow.add(i+1);
         }
+
+        ulepszenia();
     }
     private static void przejazdKierowcy(Kierowca kierowca, Tor tor, double CzasPoprzednika)
     {
@@ -126,6 +153,30 @@ public class Main {
         }
 
     }
+
+
+    private static void ulepszenia()
+    {
+        double ulepszenieMechanikow = globalnaWartoscUlepszen/20;
+        double ulepszeniePojazdow = globalnaWartoscUlepszen/10;
+        double ulepszenieKierowcow = globalnaWartoscUlepszen/5;
+
+        for(int i=0;i<listaMechanikow.size();i++)
+        {
+            listaMechanikow.get(i).ulepszStatystyki(ulepszenieMechanikow);
+        }
+
+        for(int i=0;i<listaPojazdow.size();i++)
+        {
+            listaPojazdow.get(i).ulepszStatystyki(ulepszeniePojazdow);
+        }
+
+        for(int i=0; i<listaKierowcow.size();i++)
+        {
+            listaKierowcow.get(i).ulepszStatystyki(ulepszenieKierowcow);
+        }
+    }
+
 
     private static void pokazWyniki() {
         for (Kierowca kierowca : listaKierowcow) {
