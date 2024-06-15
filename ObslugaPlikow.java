@@ -156,6 +156,13 @@ public class ObslugaPlikow {
      * <p>W przypadku gdy <code>czyWszystkieKoncowe==true</code>, wywolywane jest {@link #zapiszWyniki(boolean) ObslugaPlikow.zapiszWyniki(true)}.
      * W przeciwnym wypadku, przygotowuje pojedyncza forme danych wskazana w <code>typZapisu</code> do zapisu kompletujac je do ArrayLista ArrayListow Stringow, nastepnie
      * wysylajac te dane do {@link #zapisPliku(ArrayList, String) ObslugaPlikow.zapisPliku(ArrayList&lt;ArrayList&lt;String&gt;&gt;,String)}</p>
+     * <p>Mozliwe typy zapisu:</p>
+     * <ul>
+     *     <li>"Wyniki" - koncowe wyniki z calego sezonu</li>
+     *     <li>"Parametry" - stan wszystkich umiejetnosci kierowcow i ich pojazdow na chwile obecna </li>
+     *     <li>"Wyprzedzenia" - sumy wszystkich wyprzedzen dokonanych przez kazdego z kierowcow w kazdym z wyscigow</li>
+     *     <li>"Okrazenia" - czasy przejazdow poszczegolnych okrazen przez kazdego z kierowcow w obecnym wyscigu</li>
+     * </ul>
      * @param czyWszystkieKoncowe Czy dokonany ma zostac zapis wszystkich mozliwych typow zapisu, czy tylko jeden wybrany.
      * @param typZapisu W przypadku <code>czyWszystkieKoncowe==false</code> wskazuje ktory typ zapisu przeprowadzic
      * @see #zapiszWyniki(boolean) 
