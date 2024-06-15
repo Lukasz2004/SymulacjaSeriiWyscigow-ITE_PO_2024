@@ -292,7 +292,13 @@ public class ObslugaPlikow {
         }
 
     }
-    //Formatuje array typu Double do arrayu typu String w celu prostego zapisu do plik csv
+
+    /**
+     * Metoda procesu wczytania danych, umozliwiajaca konwersje danych w formie Double do odpowiedniej do zapisu w pliku csv
+     * formy Stringa.
+     * @param wartosci Arraylist Doublow ktore maja zostac poddane konwersji
+     * @return Arraylist Stringow zlozonych z przeformatowanych wartosci Double w formacie nadajacym sie do zapisu w pliku csv
+     */
     private static ArrayList<String> doubleArrayToStringArrayFormatter(ArrayList <Double> wartosci)
     {
         ArrayList<String> wynikowy = new ArrayList<>();
@@ -302,8 +308,13 @@ public class ObslugaPlikow {
         }
         return wynikowy;
     }
-
-    //Zapisuje dane zadane w formacie ArrayList<Arraylist<String>> do podanego pliku formatujac je jako plik csv
+    /**
+     * Metoda procesu zapisu danych, ktora tworzy badz nadpisuje plik csv o podanej nazwie oraz konwertuje dane do postaci csv
+     * i zapisuje je do pliku.
+     * @param dane Pelen komplet danych ktore maja zostac zapisane w danym pliku w postaci ArrayLista Arraylistow Stringow.
+     * @param nazwaPliku Nazwa pliku ktory utworzy sie w folderze Wyniki w formacie csv
+     * @throws RuntimeException jesli nastepuje blad zapisu
+     */
     private static void zapisPliku(ArrayList<ArrayList<String>> dane, String nazwaPliku) {
         File plik = new File("Wyniki/"+nazwaPliku+".csv");
         try (PrintWriter printWriter = new PrintWriter(plik)) {
