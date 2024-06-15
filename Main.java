@@ -211,17 +211,30 @@ public class Main {
         }
         System.out.println("\n");
     }
-    //Pozwala zinicjalizowac dane
+
+    /**
+     * Metoda wczytujaca dane i zapisujaca je w {@link #listaKierowcow} oraz {@link #listaTorow}. Konieczna do inicjalizacji danych startowych.
+     * @param inKierowca Arraylist obiektow typu {@link Kierowca} zawierajacy wszystkich kierowcow i ich parametry startowe
+     * @param inTor Arraylist obiektow typu {@link Tor} zawierajacy wszystkie tory do rozegrania wyscigow
+     */
     public static void setterDanych(ArrayList<Kierowca> inKierowca, ArrayList<Tor> inTor)
     {
         listaKierowcow=inKierowca;
         listaTorow=inTor;
     }
 
-    //Pozwala zapisac dane
+    /**
+     * Metoda udostepniajaca liste obiektow wszystkich kierowcow. Uzywana do przekazywania danych do zapisania.
+     * @return {@link #listaKierowcow}
+     */
     public static ArrayList<Kierowca> getListaKierowcow(){
         return listaKierowcow;
     }
+
+    /**
+     * Metoda udostepniajaca laczna ilosc torow. Przydatna do wyznaczania lacznej ilosci wyscigow.
+     * @return Rozmiar listy zawierajaca wszystkie obiekty Torow przechowywane w {@link #listaTorow}
+     */
     public static Integer getIloscTorow()
     {
         return listaTorow.size();
