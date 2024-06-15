@@ -1,0 +1,2 @@
+Ten plik dołączony został aby narzędzia kontroli wersji nie usuwały folderu Wyniki uznawając go za pusty, podczas gdy jego istnienie jest kluczowe do uruchomienia programu.
+Plik ten może być bezpiecznie usunięty, jeśli nie spowoduje to usunięcia folderu Wyniki.
