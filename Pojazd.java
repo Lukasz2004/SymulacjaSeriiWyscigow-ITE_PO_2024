@@ -1,15 +1,34 @@
 import java.util.List;
 import java.util.Random;
-
+/** Ta klasa zawiera informacje dotyczace pojazdu.
+ * <p>Klasa wchodzi w relacje z klasami {@link Kierowca} oraz {@link Mechanik}</p>
+ * <p>Posiada konstrukory i metode implementowana z interface {@link Ulepszenie}</p>
+ */
 public class Pojazd implements Ulepszenie {
+    /** Przechowyje nazwe pojazdu
+     */
     public String nazwa;
+    /** Przechowyje mechanika, ktory wykonuje serwis pojazdu podczas pitstopu
+     */
     public Mechanik mechanik;
+    /** Przechowyje wartosc, ktora wplywa na czas osiagany na odcinkach prostych
+     */
     public double szybkosc;
+    /** Przechowyje wartosc, ktora wplywa na czas osiagany na zakretach oraz na szybkosc zuzuwania opon
+     */
     public double przyczepnosc;
+    /** Przechowyje ilosc paliwa podczas wyscigu
+     */
     public double stanPaliwa;
+    /** Przechowyje wartosc, ktora okresla stopien zuzycia opon podczas wyscigu
+     */
     public double stanOpon;
 
     //Dokonuje ulepszen parametrow pomiedzy wyscigami
+    /** Metoda ulepsza jedna statystyke o podana wartosc
+     * <p>Parametr, ktory zostanie ulepszony jest losowany </p>
+     * @param wartosc double zawieracy wartosc ulepszenia
+     */
     @Override
     public void ulepszStatystyki(double wartosc) {
         Random ulepszenie = new Random();
@@ -19,6 +38,10 @@ public class Pojazd implements Ulepszenie {
         if(wybor == 1) this.przyczepnosc += wartosc;
     }
 
+    /** Konstruktor zwykly
+     *  @param mechanik Mechanik, ktory wykonuje serwis pojazdu podczas pitstopu
+     *  @param dane Lista String zawierajaca inforamcje dotyczace pojazdu pobrane z pliku csv
+     */
     public Pojazd (Mechanik mechanik, List<String> dane)
     {
         this.nazwa = dane.get(0);
@@ -29,6 +52,9 @@ public class Pojazd implements Ulepszenie {
         this.stanOpon = 100;
 
     }
+    /** Konstruktor kopiujacy
+     *  @param p Pojazd, od ktorego kopiowane sa wartosci dla nowego pojazdu dla drugiego kierowcy z druzyny
+     */
     public Pojazd (Pojazd p)
     {
         this.nazwa = p.nazwa;

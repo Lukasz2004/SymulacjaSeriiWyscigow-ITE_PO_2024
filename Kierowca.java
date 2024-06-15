@@ -1,27 +1,65 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+/** Ta klasa zawiera informacje dotyczace kierowcy.
+ * <p>Rozszerza klase abstrakyjna {@link Personel} </p>
+ * <p>Klasa wchodzi w relacje z klasa {@link Pojazd}</p>
+ * <p>Posiada konstrukor i metode implementowana z interface {@link Ulepszenie}</p>
+ */
 public class Kierowca extends Personel implements Ulepszenie {
+    /** Przechowyje pojazd z ktorego korzysta kierowca
+     */
     public Pojazd pojazd;
+    /** Przechowyje wartosc, ktora wplywa na czas osiagany na odcinkach prostych
+     */
     public double predkoscProsta;
+    /** Przechowyje wartosc, ktora wplywa na czas osiagany na zakretach
+     */
     public double predkoscZakret;
+    /** Przechowyje wartosc, ktora wplywa na wyprzedzenia przeciwnikow
+     */
     public double umiejetnoscWyprzedania;
+    /** Przechowyje wartosc, ktora wplywa na obrone przed wyprzedzeniem przez przeciwnika
+     */
     public double umiejetnoscObrony;
+    /** Przechowyje wartosc, ktora wplywa na wyprzedzenia, obrone, możliwość zniszenia pojazdu i zakonczenia wyscigu
+     */
     public double agresywnosc;
+    /** Przechowyje wartosc, ktora wplywa odpornosc na warunki pogodowe panujace na torze
+     */
     public double adaptacjaPogoda;
+    /** Przechowyje wartosc, ktora wplywa na ilosc zuzywanego paliwa oraz opon podczas wycigu
+     */
     public double ekonomicznoscJazdy;
+    /** Przechowyje czas przejazdu podczas pojedynczego wyscigu
+     */
     public double czasPrzejazdu;
+    /** Przechowyje informacje czy kierowca zjechal do pitstopu
+     */
     public boolean czyWPitstopie;
+    /** Przechowyje informacje czy kierowca zostal wyelininowany podczas pojedynczego wyscigu
+     */
     public boolean czyEliminacja;
 
     //Dane potrzebne do tworzenia statystyk
+    /** Przechowyje statystyki okrazen w pojedynczym wyscigu
+     */
     public ArrayList<Double> statystykiOkrazenia=new ArrayList<>();
+    /** Przechowyje statystyki wynikow w sezonie
+     */
     public ArrayList<String> statystykiWynikow=new ArrayList<>();
+    /** Przechowyje statystyki wyprzedzen w sezonie
+     */
     public ArrayList<Integer> statystykiWyprzedzenia=new ArrayList<>();
+    /** Przechowyje ilosc punktow w sezonie
+     */
     public int punktyZaPozycje=0;
 
     //Dokonuje ulepszen parametrow pomiedzy wyscigami
+    /** Metoda ulepsza jedna statystyke o podana wartosc
+     * <p>Parametr, ktory zostanie ulepszony jest losowany </p>
+     * @param wartosc double zawieracy wartosc ulepszenia
+     */
     @Override
     public void ulepszStatystyki(double wartosc) {
         Random ulepszenie = new Random();
@@ -34,7 +72,11 @@ public class Kierowca extends Personel implements Ulepszenie {
         if(wybor == 5) this.adaptacjaPogoda += wartosc;
         if(wybor == 6) this.ekonomicznoscJazdy += wartosc;
     }
-
+    /** Konstruktor zwykly
+     *  @param druzynaInput Druzyna do ktorej nalezy kierowca
+     *  @param pojazdInput Pojazd, z ktorego korzysta kierowca
+     *  @param dane Lista String zawierajaca inforamcje dotyczace kierowcy pobrane z pliku csv
+     */
     public Kierowca(Druzyna druzynaInput, Pojazd pojazdInput, List<String> dane) {
         this.druzyna = druzynaInput;
         this.imie = dane.get(1);
