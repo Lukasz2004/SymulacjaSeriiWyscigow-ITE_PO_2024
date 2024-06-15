@@ -154,8 +154,16 @@ public class ObslugaPlikow {
     /**
      * Nadrzedna metoda procesu zapisu danych, ktora dokonuje calosci procesu zapisu danych do pliku csv.
      * <p>W przypadku gdy <code>czyWszystkieKoncowe==true</code>, wywolywane jest {@link #zapiszWyniki(boolean) ObslugaPlikow.zapiszWyniki(true)}.
-     * W przeciwnym wypadku, przygotowuje pojedyncza forme danych wskazana w <code>typZapisu</code> do zapisu kompletujac je do ArrayLista ArrayListow Stringow, nastepnie
+     * W przeciwnym wypadku, pobiera dane z {@link Main#getListaKierowcow() Main.getListaKierowcow()}, przygotowuje dane wskazane w
+     * <code>typZapisu</code> do zapisu kompletujac je do ArrayLista ArrayListow Stringow, nastepnie
      * wysylajac te dane do {@link #zapisPliku(ArrayList, String) ObslugaPlikow.zapisPliku(ArrayList&lt;ArrayList&lt;String&gt;&gt;,String)}</p>
+     * <p>Mozliwe typy zapisu:</p>
+     * <ul>
+     *     <li>"Wyniki" - koncowe wyniki z calego sezonu</li>
+     *     <li>"Parametry" - stan wszystkich umiejetnosci kierowcow i ich pojazdow na chwile obecna </li>
+     *     <li>"Wyprzedzenia" - sumy wszystkich wyprzedzen dokonanych przez kazdego z kierowcow w kazdym z wyscigow</li>
+     *     <li>"Okrazenia" - czasy przejazdow poszczegolnych okrazen przez kazdego z kierowcow w obecnym wyscigu</li>
+     * </ul>
      * @param czyWszystkieKoncowe Czy dokonany ma zostac zapis wszystkich mozliwych typow zapisu, czy tylko jeden wybrany.
      * @param typZapisu W przypadku <code>czyWszystkieKoncowe==false</code> wskazuje ktory typ zapisu przeprowadzic
      * @see #zapiszWyniki(boolean) 
@@ -292,7 +300,13 @@ public class ObslugaPlikow {
         }
 
     }
-    //Formatuje array typu Double do arrayu typu String w celu prostego zapisu do plik csv
+
+    /**
+     * Metoda procesu wczytania danych, umozliwiajaca konwersje danych w formie Double do odpowiedniej do zapisu w pliku csv
+     * formy Stringa.
+     * @param wartosci Arraylist Doublow ktore maja zostac poddane konwersji
+     * @return Arraylist Stringow zlozonych z przeformatowanych wartosci Double w formacie nadajacym sie do zapisu w pliku csv
+     */
     private static ArrayList<String> doubleArrayToStringArrayFormatter(ArrayList <Double> wartosci)
     {
         ArrayList<String> wynikowy = new ArrayList<>();
@@ -302,8 +316,13 @@ public class ObslugaPlikow {
         }
         return wynikowy;
     }
-
-    //Zapisuje dane zadane w formacie ArrayList<Arraylist<String>> do podanego pliku formatujac je jako plik csv
+    /**
+     * Metoda procesu zapisu danych, ktora tworzy badz nadpisuje plik csv o podanej nazwie oraz konwertuje dane do postaci csv
+     * i zapisuje je do pliku.
+     * @param dane Pelen komplet danych ktore maja zostac zapisane w danym pliku w postaci ArrayLista Arraylistow Stringow.
+     * @param nazwaPliku Nazwa pliku ktory utworzy sie w folderze Wyniki w formacie csv
+     * @throws RuntimeException jesli nastepuje blad zapisu
+     */
     private static void zapisPliku(ArrayList<ArrayList<String>> dane, String nazwaPliku) {
         File plik = new File("Wyniki/"+nazwaPliku+".csv");
         try (PrintWriter printWriter = new PrintWriter(plik)) {

@@ -2,13 +2,54 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Random;
 
+/** Klasa glowna ktora wywoluje inicjalizacje danych startowych, dokonuje calego procesu wyscigow oraz wywoluje zapisy danych.
+ */
 public class Main {
+    /**
+     * Parametr ilosci dokonywanych okrazen w ciagu jednego wyscigu.
+     * @see #uruchomWyscig(Tor) 
+     */
     private static final int liczbaOkrazenNaTor = 50;
+    /**
+     * Parametr globalny uzywany do analizowania wplywu roznych czynnikow na wynik symulacji. Wplywa On na wynik interakcji-wyprzedzen pomiedzy kierowcami.
+     * Nie mylic z {@link Kierowca#agresywnosc}.
+     * Jako domyslna przyjmuje sie wartosc <code>0.03</code>
+     * @see #wyprzedzanie(int)
+     */
     private static final double globalnaAgresywnosc = 0.03;//Standardowa: 0.03
+    /**
+     * Parametr globalny uzywany do analizowania wplywu roznych czynnikow na wynik symulacji. Wplywa On na ilosc ulepszen statystyk {@link Kierowca Kierowcow},
+     * {@link Mechanik Mechanikow} oraz {@link Pojazd Pojazdow} dokonywanych pomiedzy wyscigami.
+     * Jako domyslna przyjmuje sie wartosc <code>0.25</code>
+     * @see #ulepszenia()
+     * @see Ulepszenie
+     * @see Kierowca#ulepszStatystyki(double)
+     * @see Mechanik#ulepszStatystyki(double)
+     * @see Pojazd#ulepszStatystyki(double)
+     */
     private static final double globalnaWartoscUlepszen = 0.25;//Standardowa: 0.25
+    /**
+     * Parametr globalny uzywany do analizowania wplywu roznych czynnikow na wynik symulacji. Ustala On startowy {@link Pojazd#stanPaliwa} dla kazdego z {@link Pojazd Pojazdow} resetowany co wyscig i w trakcie pitstopow.
+     * Jako domyslna przyjmuje sie wartosc <code>50</code>
+     *  @see Pojazd#stanPaliwa
+     */
     private static final double wymaganaPojemnoscPaliwa = 50;//Standardowa: 50
+
+
+
+    /**
+     * Lista przechowujaca wszystkie obiekty typu {@link Kierowca} w kolejnosci ich pozycji w wyscigu, czyli na podstawie {@link Kierowca#czasPrzejazdu}.
+     * @see Kierowca
+     */
     private static ArrayList<Kierowca> listaKierowcow = new ArrayList<>();
+    /**
+     * Lista przechowujaca wszystkie obiekty typu {@link Tor} w kolejnosci wczytania ich z danych startowych. Na tych torach w kolejnosci ich wystepowania
+     * w liscie odbywaja sie kolejno wyscigi.
+     * @see Tor
+     */
     private static ArrayList<Tor> listaTorow = new ArrayList<>();
+
+
 
     public static void main(String[] args) {
         ObslugaPlikow.wczytajDane();
@@ -202,7 +243,10 @@ public class Main {
         }
     }
 
-    //Wyswietla wyniki w konsoli
+    /**
+     * Metoda wyswietlajaca imiona oraz czasy przejazdu 3 pierwszych w wyscigu kierowcow.
+     * @see #listaKierowcow
+     */
     private static void pokazWyniki() {
         System.out.print("Podium: ");
         for(int i=0; i<Math.min(3,listaKierowcow.size());i++)
@@ -211,17 +255,32 @@ public class Main {
         }
         System.out.println("\n");
     }
-    //Pozwala zinicjalizowac dane
+
+    /**
+     * Metoda wczytujaca dane i zapisujaca je w {@link #listaKierowcow} oraz {@link #listaTorow}. Konieczna do inicjalizacji danych startowych.
+     * @param inKierowca Arraylist obiektow typu {@link Kierowca} zawierajacy wszystkich kierowcow i ich parametry startowe
+     * @param inTor Arraylist obiektow typu {@link Tor} zawierajacy wszystkie tory do rozegrania wyscigow
+     */
     public static void setterDanych(ArrayList<Kierowca> inKierowca, ArrayList<Tor> inTor)
     {
         listaKierowcow=inKierowca;
         listaTorow=inTor;
     }
 
-    //Pozwala zapisac dane
+    /**
+     * Metoda udostepniajaca liste obiektow wszystkich kierowcow. Uzywana do przekazywania danych do zapisania.
+     * @return {@link #listaKierowcow}
+     * @see #listaKierowcow
+     */
     public static ArrayList<Kierowca> getListaKierowcow(){
         return listaKierowcow;
     }
+
+    /**
+     * Metoda udostepniajaca laczna ilosc torow. Przydatna do wyznaczania lacznej ilosci wyscigow.
+     * @return Rozmiar listy zawierajaca wszystkie obiekty Torow przechowywane w {@link #listaTorow}
+     * @see #listaTorow
+     */
     public static Integer getIloscTorow()
     {
         return listaTorow.size();
