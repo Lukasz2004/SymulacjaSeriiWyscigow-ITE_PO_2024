@@ -7,7 +7,26 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+/** Ta klasa obsluguje wszystkie operacje na danych wejsciowych i wyjsciowych uzywajac plikow w rozszerzeniu csv.
+ * <p>Posiada metody umozliwiajace wczytanie danych startowych objektow i zinicjalizowanie ich na potrzeby symulacji,
+ *  rozdzielania i konwersji danych z formatow csv na typy tabelowe i odwrotnie oraz metody zapisujace aktualny stan
+ *  symulacji na podstawie danych dostarczonych z innych funkcji.</p>
+ */
 public class ObslugaPlikow {
+    /** Nadrzedna metoda procesu wczytania danych, ktora dokonuje calosci procesu inicjalizacji obiektow na podstawie danych poslugujac sie innymi metodami.
+     * Wczytuje startowe dane dla symulacji w postaci elementow klas:
+     * <ul>
+     *     <li>{@link Druzyna}, domyslnie z pliku <code>Druzyna.csv</code></li>
+     *     <li>{@link Mechanik}, domyslnie z pliku <code>Mechanik.csv</code></li>
+     *     <li>{@link Pojazd}, domyslnie z pliku <code>Pojazd.csv</code></li>
+     *     <li>{@link Kierowca}, domyslnie z pliku <code>Kierowca.csv</code></li>
+     *     <li>{@link Tor}, domyslnie z pliku <code>Tor.csv</code></li>
+     * </ul>
+     * <p>W metodzie mozna konfigurowac sciezki plikow wejsciowych.</p>
+     * <p>Do kazdego z wymienionych plikow uzywa metody {@link #odczytPliku(String) ObslugaPlikow.odczytPliku(String)} w celu uzyskania z pliku
+     * odpowiednio sformatowanej Listy List z danymi, nastepnie wywoluje konstruktory dla kazdego z obiektow i poprzez
+     * {@link Main#setterDanych(ArrayList, ArrayList) Main.setterDanych(ArrayList, ArrayList)} wrzuca do symulacji ArrayListy utworzonych obiektow.</p>
+     */
     public static void wczytajDane(){
         String sciezkaDaneDruzyn = "DaneStartowe/Druzyna.csv";
         String sciezkaDaneMechanikow = "DaneStartowe/Mechanik.csv";
@@ -64,9 +83,15 @@ public class ObslugaPlikow {
         Main.setterDanych(listaKierowcow,listaTorow);
     }
 
-    //Otwiera plik CSV, przepuszcza go przez funkcje liniaCSVnaDane i zwraca dane w formie listy list stringow
-    private static List<List<String>> odczytPliku(String sciezka)
-    {
+    /**
+     * Metoda procesu wczytania danych, ktora otwiera zadany plik csv i odczytujac go linia po linii przepuszcza go przez
+     * funkcje {@link #liniaCSVnaDane(String) ObslugaPlikow.liniaCSVnaDane(String)} w celu zwrocenia gotowej listy list
+     * stringow.
+     * @param sciezka Relatywna sciezka do pliku ktory metoda ma otworzyc i odczytac
+     * @return Dane zawarte w pliku przekonwertowane z formatu csv na Liste List Stringow
+     * @throws RuntimeException jesli plik o podanej sciezce nie istnieje
+     */
+    private static List<List<String>> odczytPliku(String sciezka) throws RuntimeException {
         List<List<String>> zwrotDanych = new ArrayList<>();
         try (Scanner scannerDruzyn = new Scanner(new File(sciezka))) {
             while (scannerDruzyn.hasNextLine()) {
@@ -80,6 +105,13 @@ public class ObslugaPlikow {
     }
 
     // Zamienia pojedyncze linie z pliku CSV na listy Stringow
+
+    /**
+     * Metoda procesu wczytania danych, rozdzielajaca zadane linie tekstu odczytane w formacie csv i tworzaca tablice z
+     * odczytanymi wartosciami
+     * @param linia String zawierajacy pojedyncza linijke tekstu z pliku csv ktora ma zostac rozdzielona na dane
+     * @return Lista Stringow z danymi ktore powstaly w wyniku rozdzielenia bazowego Stringa wzgledem znakow ";"
+     */
     private static List<String> liniaCSVnaDane(String linia) {
         List<String> wartosci = new ArrayList<>();
         try (Scanner scanner = new Scanner(linia)) {
@@ -95,8 +127,16 @@ public class ObslugaPlikow {
 
 
 
-
-    //Funkcja zapisz wyniki - w przypadku gdy czyWszystkieKoncowe == true
+    /**
+     * Przeladowana metoda dzialajaca jak {@link #zapiszWyniki(boolean, String) ObslugaPlikow.zapiszWyniki(boolean,String)}.
+     * <p>Ta implementacja tej metody zaklada ze <code>czyWszystkieKoncowe == true</code> czyli zapis wszystkich mozliwych
+     * typow zapisu z wylaczeniem <code>"Okrazenia"</code>, w skutek czego wywoluje kilkukrotnie
+     * {@link #zapiszWyniki(boolean, String) ObslugaPlikow.zapiszWyniki(false, x)} gdzie x jest kazdym kolejnym typem zapisu </p>
+     *
+     * @param czyWszystkieKoncowe Czy dokonany ma zostac zapis wszystkich mozliwych typow zapisu, czy tylko jeden wybrany.
+     * @see #zapiszWyniki(boolean, String)
+     * @throws RuntimeException Jesli <code>czyWszystkieKoncowe == false</code>. W takim wypadku nalezy uzyc innej implementacji tej metody.
+     */
     public static void zapiszWyniki(boolean czyWszystkieKoncowe)
     {
         if(czyWszystkieKoncowe)
@@ -110,7 +150,16 @@ public class ObslugaPlikow {
             throw new RuntimeException("Nie sprecyzowano typu zapisu wynikow.");
         }
     }
-    //Funkcja zapisz wyniki - w przypadku gdy czyWszystkieKoncowe == false
+
+    /**
+     * Nadrzedna metoda procesu zapisu danych, ktora dokonuje calosci procesu zapisu danych do pliku csv.
+     * <p>W przypadku gdy <code>czyWszystkieKoncowe==true</code>, wywolywane jest {@link #zapiszWyniki(boolean) ObslugaPlikow.zapiszWyniki(true)}.
+     * W przeciwnym wypadku, przygotowuje pojedyncza forme danych wskazana w <code>typZapisu</code> do zapisu kompletujac je do ArrayLista ArrayListow Stringow, nastepnie
+     * wysylajac te dane do {@link #zapisPliku(ArrayList, String) ObslugaPlikow.zapisPliku(ArrayList&lt;ArrayList&lt;String&gt;&gt;,String)}</p>
+     * @param czyWszystkieKoncowe Czy dokonany ma zostac zapis wszystkich mozliwych typow zapisu, czy tylko jeden wybrany.
+     * @param typZapisu W przypadku <code>czyWszystkieKoncowe==false</code> wskazuje ktory typ zapisu przeprowadzic
+     * @see #zapiszWyniki(boolean) 
+     */
     public static void zapiszWyniki(boolean czyWszystkieKoncowe, String typZapisu)
     {
         if (czyWszystkieKoncowe)

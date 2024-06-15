@@ -2,7 +2,7 @@
 <project version="4">
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" value="D:/Chmury/Google Drive - Politechnika Wrocławska/Mój dysk/Semestr 2/Programowanie Obiektowe/Projekt - Wyscig/JavadocProjektu" />
-    <option name="OPTION_SCOPE" value="public" />
+    <option name="OPTION_SCOPE" value="private" />
     <option name="OTHER_OPTIONS" value="-encoding ISO-8859-1" />
     <option name="LOCALE" value="pl" />
   </component>
