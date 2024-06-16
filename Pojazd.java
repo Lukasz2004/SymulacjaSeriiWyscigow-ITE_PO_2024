@@ -5,22 +5,22 @@ import java.util.Random;
  * <p>Posiada konstrukory i metode implementowana z interface {@link Ulepszenie}</p>
  */
 public class Pojazd implements Ulepszenie {
-    /** Przechowyje nazwe pojazdu
+    /** Przechowuje nazwe pojazdu
      */
     public String nazwa;
-    /** Przechowyje mechanika, ktory wykonuje serwis pojazdu podczas pitstopu
+    /** Przechowuje mechanika, ktory wykonuje serwis pojazdu podczas pitstopu
      */
     public Mechanik mechanik;
-    /** Przechowyje wartosc, ktora wplywa na czas osiagany na odcinkach prostych
+    /** Przechowuje wartosc, ktora wplywa na czas osiagany na odcinkach prostych
      */
     public double szybkosc;
-    /** Przechowyje wartosc, ktora wplywa na czas osiagany na zakretach oraz na szybkosc zuzuwania opon
+    /** Przechowuje wartosc, ktora wplywa na czas osiagany na zakretach oraz na szybkosc zuzuwania opon
      */
     public double przyczepnosc;
-    /** Przechowyje ilosc paliwa podczas wyscigu
+    /** Przechowuje ilosc paliwa podczas wyscigu
      */
     public double stanPaliwa;
-    /** Przechowyje wartosc, ktora okresla stopien zuzycia opon podczas wyscigu
+    /** Przechowuje wartosc, ktora okresla stopien zuzycia opon podczas wyscigu
      */
     public double stanOpon;
 

@@ -4,22 +4,22 @@ import java.util.Random;
  * <p>Posiada konstrukor i metode losujaca warunki pogodowe</p>
  */
 public class Tor {
-    /** Przechowyje nazwe toru
+    /** Przechowuje nazwe toru
      */
     public String nazwa;
-    /** Przechowyje dlugosc toru w kilometrach
+    /** Przechowuje dlugosc toru w kilometrach
      */
     public double dlugosc;
-    /** Przechowyje procentowa wartosc odcinkow prostych na torze
+    /** Przechowuje procentowa wartosc odcinkow prostych na torze
      */
     public double procentProstych;
-    /** Przechowyje procentowa wartosc zakretow na torze
+    /** Przechowuje procentowa wartosc zakretow na torze
      */
     public double procentZakretow;
-    /** Przechowyje procentowa szanse na deszcz
+    /** Przechowuje procentowa szanse na deszcz
      */
     private double szansaNaDeszcz;
-    /** Przechowyje informacje losowana w metodzie {@link #warunkiPogodowe()} czy na torze pada deszcz czy nie
+    /** Przechowuje informacje losowana w metodzie {@link #warunkiPogodowe()} czy na torze pada deszcz czy nie
      */
     public boolean czyPada;
 
@@ -38,7 +38,7 @@ public class Tor {
     }
 
     /** Konstruktor zwykly
-     * <p>Wywolywana jest medota {@link #warunkiPogodowe()}, ktora zwraca inforamcje czy na torze pada deszcz </p>
+     * <p>Wywolywana jest metoda {@link #warunkiPogodowe()}, ktora zwraca inforamcje czy na torze pada deszcz </p>
      *  @param dane Lista String zawierajaca inforamcje dotyczace toru pobrane z pliku csv
      */
     public Tor(List<String> dane) {

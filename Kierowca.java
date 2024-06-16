@@ -7,51 +7,51 @@ import java.util.Random;
  * <p>Posiada konstrukor i metode implementowana z interface {@link Ulepszenie}</p>
  */
 public class Kierowca extends Personel implements Ulepszenie {
-    /** Przechowyje pojazd z ktorego korzysta kierowca
+    /** Przechowuje pojazd z ktorego korzysta kierowca
      */
     public Pojazd pojazd;
-    /** Przechowyje wartosc, ktora wplywa na czas osiagany na odcinkach prostych
+    /** Przechowuje wartosc, ktora wplywa na czas osiagany na odcinkach prostych
      */
     public double predkoscProsta;
-    /** Przechowyje wartosc, ktora wplywa na czas osiagany na zakretach
+    /** Przechowuje wartosc, ktora wplywa na czas osiagany na zakretach
      */
     public double predkoscZakret;
-    /** Przechowyje wartosc, ktora wplywa na wyprzedzenia przeciwnikow
+    /** Przechowuje wartosc, ktora wplywa na wyprzedzenia przeciwnikow
      */
     public double umiejetnoscWyprzedania;
-    /** Przechowyje wartosc, ktora wplywa na obrone przed wyprzedzeniem przez przeciwnika
+    /** Przechowuje wartosc, ktora wplywa na obrone przed wyprzedzeniem przez przeciwnika
      */
     public double umiejetnoscObrony;
-    /** Przechowyje wartosc, ktora wplywa na wyprzedzenia, obrone, możliwość zniszenia pojazdu i zakonczenia wyscigu
+    /** Przechowuje wartosc, ktora wplywa na wyprzedzenia, obrone, mozliwosc zniszenia pojazdu i zakonczenia wyscigu
      */
     public double agresywnosc;
-    /** Przechowyje wartosc, ktora wplywa odpornosc na warunki pogodowe panujace na torze
+    /** Przechowuje wartosc, ktora wplywa odpornosc na warunki pogodowe panujace na torze
      */
     public double adaptacjaPogoda;
-    /** Przechowyje wartosc, ktora wplywa na ilosc zuzywanego paliwa oraz opon podczas wycigu
+    /** Przechowuje wartosc, ktora wplywa na ilosc zuzywanego paliwa oraz opon podczas wyscigu
      */
     public double ekonomicznoscJazdy;
-    /** Przechowyje czas przejazdu podczas pojedynczego wyscigu
+    /** Przechowuje czas przejazdu podczas pojedynczego wyscigu
      */
     public double czasPrzejazdu;
-    /** Przechowyje informacje czy kierowca zjechal do pitstopu
+    /** Przechowuje informacje czy kierowca zjechal do pitstopu
      */
     public boolean czyWPitstopie;
-    /** Przechowyje informacje czy kierowca zostal wyelininowany podczas pojedynczego wyscigu
+    /** Przechowuje informacje czy kierowca zostal wyelininowany podczas pojedynczego wyscigu
      */
     public boolean czyEliminacja;
 
     //Dane potrzebne do tworzenia statystyk
-    /** Przechowyje statystyki okrazen w pojedynczym wyscigu
+    /** Przechowuje statystyki okrazen w pojedynczym wyscigu
      */
     public ArrayList<Double> statystykiOkrazenia=new ArrayList<>();
-    /** Przechowyje statystyki wynikow w sezonie
+    /** Przechowuje statystyki wynikow w sezonie
      */
     public ArrayList<String> statystykiWynikow=new ArrayList<>();
-    /** Przechowyje statystyki wyprzedzen w sezonie
+    /** Przechowuje statystyki wyprzedzen w sezonie
      */
     public ArrayList<Integer> statystykiWyprzedzenia=new ArrayList<>();
-    /** Przechowyje ilosc punktow w sezonie
+    /** Przechowuje ilosc punktow w sezonie
      */
     public int punktyZaPozycje=0;
 

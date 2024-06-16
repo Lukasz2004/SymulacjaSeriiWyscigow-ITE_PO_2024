@@ -10,16 +10,16 @@ public abstract class Personel {
     /** Odwoluje sie do druzyny, do ktorej nalezy personel
      */
     public Druzyna druzyna;
-    /** Przechowyje imie
+    /** Przechowuje imie
      */
     public String imie;
-    /** Przechowyje nazwisko
+    /** Przechowuje nazwisko
      */
     public String nazwisko;
-    /** Przechowyje narodowosc
+    /** Przechowuje narodowosc
      */
     public String narodowosc;
-    /** Przechowyje wiek
+    /** Przechowuje wiek
      */
     public int wiek;
 }

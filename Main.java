@@ -33,7 +33,7 @@ public class Main {
      * Jako domyslna przyjmuje sie wartosc <code>50</code>
      *  @see Pojazd#stanPaliwa
      */
-    private static final double wymaganaPojemnoscPaliwa = 50;//Standardowa: 50
+    private static final double wymaganaPojemnoscPaliwa = 10;//Standardowa: 50
 
 
 
@@ -146,6 +146,12 @@ public class Main {
     }
 
     //Oblicza czas pitstopu kierowcy
+    /** Metoda obliczajaca czas jaki kierowca spedzil w pitstopie
+     * <p>Kiedy kierowca zjezdza do pitstopu sprawdzany jest {@link Pojazd#stanPaliwa} oraz {@link Pojazd#stanOpon}</p>
+     * <p>Jezeli stan jest za maly to czas w pitstopie jest zwiekszany o zmienna losowa modyfikowana przez {@link Mechanik#szybkosc} oraz uzupelniany jest stan</p>
+     * @param kierowca Kierowca, dla ktorego obliczany jest czas pistopu
+     * @return Czas pitstopu, ktory bedzie dodany do czasu przejazdu
+     */
     private static double pitstop(Kierowca kierowca){
         double czasPitstopu = 0;
         Random czas = new Random();
@@ -164,6 +170,22 @@ public class Main {
     }
 
     //Oblicza mozliwosc i rezultat wyprzedzania miedzy sasiadujaca para kierowcow
+    /** Metoda sprawdzajaca mozliwosc wyprzedzenia, eliminacji oraz dokonujaca zamiany kolejnosci kierowcow w liscie
+     * <p>Sprawdzane sa {@link Kierowca#czyEliminacja}, {@link Kierowca#czyWPitstopie} drugiego kierowcy oraz czas jaki dzieli kierowcow od siebie</p>
+     * <p>Jezeli ktorys z warunkow uniemozliwia wyprzedzenie to zostaje ono przerwane</p>
+     * <p>Sprawdzane jest czy pierwszy kierowca znajduje sie w pitstopie i czy mozliwe jest natychmiastowe wyprzedzenie</p>
+     * <p>Jezeli mozliwe jest natychmiastowe wyprzedzenie lub </p>
+     * <p>parametr wyprzedznia drugiego kierowcy skaladajacy sie z {@link Kierowca#umiejetnoscWyprzedania}, {@link Kierowca#agresywnosc}, {@link Main#globalnaAgresywnosc} i losowej zmiennej jest wiekszy od </p>
+     * <p>parametru obrony pierwszego kierowcu skaladajacy sie z {@link Kierowca#umiejetnoscObrony}, {@link Kierowca#agresywnosc}, {@link Main#globalnaAgresywnosc} i losowej zmiennej</p>
+     * <p>Nastepuje wyprzedzanie, zamiana pozycji kierowcow w liscie i czasow oraz zmiana {@link Kierowca#statystykiWyprzedzenia}</p>
+     * <p>Kierowca moze wtedy rozpoczac kolejne wyprzedzenie poprzez ponowne wywolanie metody</p>
+     * <p>Jezeli wyprzedzanie sie nie udalo losowa wartosc jest porownywana z parametrem skladajacym sie z {@link Kierowca#umiejetnoscWyprzedania}, {@link Kierowca#agresywnosc}, {@link Main#globalnaAgresywnosc}</p>
+     * <p>Kiedy parametr jest wiekszy od wartosci losowej to drugi kierowca zostaje wyeliminowany oraz trafia na koniec listy, zmienna {@link Kierowca#czasPrzejazdu} zostaje ustawiona na -1 </p>
+     * <p>Jezeli drugi kierowca zostal wyeliminowany sprawdzane jest {@link Kierowca#czyWPitstopie} pierwszego kierowcy oraz </p>
+     * <p>wartosc losowa porownywana jest z parametrem skladajacym sie z {@link Kierowca#umiejetnoscObrony}, {@link Kierowca#agresywnosc}, {@link Main#globalnaAgresywnosc}</p>
+     * <p>Kiedu parametr jest wiekszy od wartosci losowej to pierwszy kierowca zostaje wyeliminowany oraz trafia na koniec listy, zmienna {@link Kierowca#czasPrzejazdu} zostaje ustawiona na -1 </p>
+     * @param pozKierowcy Pozycja kierowcy, ktory zaczyna wyprzedzanie
+     */
     private static void wyprzedzanie(int pozKierowcy)
     {
         Kierowca kierowca1 = listaKierowcow.get(pozKierowcy-1);
@@ -229,6 +251,10 @@ public class Main {
 
 
     //Dokonuje wszystkich ulepszen
+    /** Metoda wywolujaca ulepszenia mechanika, pojazdu oraz kierowcy
+     * <p>Wartosc ulepszenia to zmodyfikowana {@link Main#globalnaWartoscUlepszen}</p>
+     * <p>Ulepszony zostaje kazdy kierowca, jego pojazd oraz mechanik danego pojazdu</p>
+     */
     private static void ulepszenia()
     {
         double ulepszenieMechanikow = globalnaWartoscUlepszen/20;

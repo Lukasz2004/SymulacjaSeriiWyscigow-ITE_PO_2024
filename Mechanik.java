@@ -5,7 +5,7 @@ import java.util.List;
  * <p>Posiada konstrukor i metode implementowana z interface {@link Ulepszenie}</p>
  */
 public class Mechanik extends Personel implements Ulepszenie{
-    /** Przechowyje wartosc, ktora definiuje szybkosc wykonywania serwisu pitstop
+    /** Przechowuje wartosc, ktora definiuje szybkosc wykonywania serwisu pitstop
      */
     public double szybkosc;
 

@@ -3,7 +3,7 @@
  * <p>Posiada konstruktor tworzacy obiekt </p>
  */
 public class Druzyna {
-    /** Przechowyje nazwe druzyny
+    /** Przechowuje nazwe druzyny
      */
     String NazwaDruzyny;
     /** Konstruktor zwykly
