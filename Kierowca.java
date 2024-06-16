@@ -25,7 +25,7 @@ public class Kierowca extends Personel implements Ulepszenie {
     /** Przechowuje wartosc, ktora wplywa na wyprzedzenia, obrone, mozliwosc zniszenia pojazdu i zakonczenia wyscigu
      */
     public double agresywnosc;
-    /** Przechowuje wartosc, ktora wplywa na odpornosc warunki pogodowe panujace na torze
+    /** Przechowuje wartosc, ktora wplywa na odpornosc na warunki pogodowe panujace na torze
      */
     public double adaptacjaPogoda;
     /** Przechowuje wartosc, ktora wplywa na ilosc zuzywanego paliwa oraz opon podczas wyscigu
