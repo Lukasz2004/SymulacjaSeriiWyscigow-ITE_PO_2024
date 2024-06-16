@@ -6,19 +6,19 @@ import java.util.Random;
  */
 public class Main {
     /**
-     * Parametr ilosci dokonywanych okrazen w ciagu jednego wyscigu.
+     * Parametr ilosci dokonywanych okrazen w ciagu jednego wyscigu. Przyjmuje sie jego stala wartosc wynoszaca <code>50</code>
      * @see #uruchomWyscig(Tor) 
      */
     private static final int liczbaOkrazenNaTor = 50;
     /**
-     * Parametr globalny uzywany do analizowania wplywu roznych czynnikow na wynik symulacji. Wplywa On na wynik interakcji-wyprzedzen pomiedzy kierowcami.
+     * Parametr globalny uzywany do analizowania wplywu roznych czynnikow na wynik symulacji - Wplywa On na wynik interakcji-wyprzedzen pomiedzy kierowcami.
      * Nie mylic z {@link Kierowca#agresywnosc}.
      * Jako domyslna przyjmuje sie wartosc <code>0.03</code>
      * @see #wyprzedzanie(int)
      */
     private static final double globalnaAgresywnosc = 0.03;//Standardowa: 0.03
     /**
-     * Parametr globalny uzywany do analizowania wplywu roznych czynnikow na wynik symulacji. Wplywa On na ilosc ulepszen statystyk {@link Kierowca Kierowcow},
+     * Parametr globalny uzywany do analizowania wplywu roznych czynnikow na wynik symulacji - Wplywa On na ilosc ulepszen statystyk {@link Kierowca Kierowcow},
      * {@link Mechanik Mechanikow} oraz {@link Pojazd Pojazdow} dokonywanych pomiedzy wyscigami.
      * Jako domyslna przyjmuje sie wartosc <code>0.25</code>
      * @see #ulepszenia()
@@ -29,7 +29,7 @@ public class Main {
      */
     private static final double globalnaWartoscUlepszen = 0.25;//Standardowa: 0.25
     /**
-     * Parametr globalny uzywany do analizowania wplywu roznych czynnikow na wynik symulacji. Ustala On startowy {@link Pojazd#stanPaliwa} dla kazdego z {@link Pojazd Pojazdow} resetowany co wyscig i w trakcie pitstopow.
+     * Parametr globalny uzywany do analizowania wplywu roznych czynnikow na wynik symulacji - Ustala On startowy {@link Pojazd#stanPaliwa} dla kazdego z {@link Pojazd Pojazdow} resetowany co wyscig i w trakcie pitstopow.
      * Jako domyslna przyjmuje sie wartosc <code>50</code>
      *  @see Pojazd#stanPaliwa
      */
@@ -65,6 +65,17 @@ public class Main {
     }
 
     //Przeprowadza jeden wyscig na podanym torze
+
+    /**
+     * Przeprowadza jeden kompletny wyscig skladajacy sie z {@link #liczbaOkrazenNaTor} okrazen na podanym torze.
+     * <p>Przed rozpoczeciem inicjalizuje dane potrzebne do wyscigu.</p>
+     * <p>Dla kazdego okrazenia przeprowadzany jest proces:</p>
+     * <ul>
+     * <li>Dla kazdego kierowcy kolejno z {@link #listaKierowcow} przeprowadza {@link #przejazdKierowcy(Kierowca, Tor, double)}.</li>
+     * <li>Nastepnie dla kazdej kolejnej pary na liscie dokonuje {@link #wyprzedzanie(int)}</li>
+     * </ul>
+     * @param tor Obiekt typu {@link Tor} na ktorym przeprowadzony zostanie wyscig
+     */
     private static void uruchomWyscig(Tor tor){
         System.out.println("TOR: "+tor.nazwa);
         if(tor.czyPada) System.out.println("Bedzie dzis padac");

@@ -23,7 +23,6 @@ public class Tor {
      */
     public boolean czyPada;
 
-    //Oblicza czy na danym torze spadnie deszcz
     /** Metoda losujaca warunki pogodowe na torze.
      * <p>Losowana wartosc porownywana jest ze zmienna {@link #szansaNaDeszcz}</p>
      * @return Informacje true/false czy na torze pada deszcz

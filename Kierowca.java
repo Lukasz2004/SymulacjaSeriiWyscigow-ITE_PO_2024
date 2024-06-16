@@ -25,7 +25,7 @@ public class Kierowca extends Personel implements Ulepszenie {
     /** Przechowuje wartosc, ktora wplywa na wyprzedzenia, obrone, mozliwosc zniszenia pojazdu i zakonczenia wyscigu
      */
     public double agresywnosc;
-    /** Przechowuje wartosc, ktora wplywa odpornosc na warunki pogodowe panujace na torze
+    /** Przechowuje wartosc, ktora wplywa na odpornosc na warunki pogodowe panujace na torze
      */
     public double adaptacjaPogoda;
     /** Przechowuje wartosc, ktora wplywa na ilosc zuzywanego paliwa oraz opon podczas wyscigu
@@ -37,7 +37,7 @@ public class Kierowca extends Personel implements Ulepszenie {
     /** Przechowuje informacje czy kierowca zjechal do pitstopu
      */
     public boolean czyWPitstopie;
-    /** Przechowuje informacje czy kierowca zostal wyelininowany podczas pojedynczego wyscigu
+    /** Przechowuje informacje czy kierowca zostal wyeliminowany podczas pojedynczego wyscigu
      */
     public boolean czyEliminacja;
 
@@ -56,8 +56,8 @@ public class Kierowca extends Personel implements Ulepszenie {
     public int punktyZaPozycje=0;
 
     //Dokonuje ulepszen parametrow pomiedzy wyscigami
-    /** Metoda ulepsza jedna statystyke o podana wartosc
-     * <p>Parametr, ktory zostanie ulepszony jest losowany </p>
+    /** Metoda ulepsza jedna statystyke o podana wartosc.
+     * <p>Parametr, ktory zostanie ulepszony jest losowany. </p>
      * @param wartosc double zawieracy wartosc ulepszenia
      */
     @Override
