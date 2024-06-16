@@ -1,3 +1,6 @@
+//Symulacja Serii Wyscigow
+//Lukasz Czerwinski & Kamil Jasyk
+//v.1.0.1
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Random;
