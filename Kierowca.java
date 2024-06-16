@@ -7,48 +7,63 @@ import java.util.Random;
  * <p>Posiada konstrukor i metode implementowana z interface {@link Ulepszenie}</p>
  */
 public class Kierowca extends Personel implements Ulepszenie {
-    /** Przechowuje pojazd z ktorego korzysta kierowca
+    /** Przechowuje obiekt typu Pojazd z ktorego korzysta kierowca
      */
     public Pojazd pojazd;
     /** Przechowuje wartosc, ktora wplywa na czas osiagany na odcinkach prostych
+     * @see Main#przejazdKierowcy(Kierowca, Tor, double)
      */
     public double predkoscProsta;
     /** Przechowuje wartosc, ktora wplywa na czas osiagany na zakretach
+     * @see Main#przejazdKierowcy(Kierowca, Tor, double)
      */
     public double predkoscZakret;
     /** Przechowuje wartosc, ktora wplywa na wyprzedzenia przeciwnikow
+     * @see Main#wyprzedzanie(int) 
      */
     public double umiejetnoscWyprzedania;
     /** Przechowuje wartosc, ktora wplywa na obrone przed wyprzedzeniem przez przeciwnika
+     * @see Main#wyprzedzanie(int) 
      */
     public double umiejetnoscObrony;
     /** Przechowuje wartosc, ktora wplywa na wyprzedzenia, obrone, mozliwosc zniszenia pojazdu i zakonczenia wyscigu
+     * @see Main#wyprzedzanie(int)
      */
     public double agresywnosc;
     /** Przechowuje wartosc, ktora wplywa odpornosc na warunki pogodowe panujace na torze
+     * @see Main#przejazdKierowcy(Kierowca, Tor, double)
+     * @see Tor#czyPada
      */
     public double adaptacjaPogoda;
     /** Przechowuje wartosc, ktora wplywa na ilosc zuzywanego paliwa oraz opon podczas wyscigu
+     * @see Pojazd#stanPaliwa
+     * @see Pojazd#stanOpon
      */
     public double ekonomicznoscJazdy;
     /** Przechowuje czas przejazdu podczas pojedynczego wyscigu
+     * @see Main#przejazdKierowcy(Kierowca, Tor, double)
      */
     public double czasPrzejazdu;
-    /** Przechowuje informacje czy kierowca zjechal do pitstopu
+    /** Przechowuje chwilowa informacje czy kierowca zjechal do pitstopu
      */
     public boolean czyWPitstopie;
-    /** Przechowuje informacje czy kierowca zostal wyelininowany podczas pojedynczego wyscigu
+    /** Przechowuje chwilowa informacje czy kierowca zostal wyelininowany podczas pojedynczego wyscigu
      */
     public boolean czyEliminacja;
 
     //Dane potrzebne do tworzenia statystyk
-    /** Przechowuje statystyki okrazen w pojedynczym wyscigu
+    /** Przechowuje tymczasowe statystyki okrazen w pojedynczym wyscigu.
+     * <p>Kazdy i-ty element w tablicy zawiera wartosc {@link #czasPrzejazdu} kierowcy po i-tym okrazeniu.</p>
+     * <p>Wartosci sa resetowane z poczatkiem kazdego wyscigu.</p>
      */
     public ArrayList<Double> statystykiOkrazenia=new ArrayList<>();
-    /** Przechowuje statystyki wynikow w sezonie
+    /** Przechowuje statystyki wynikow w sezonie.
+     * <p>Kazdy i-ty element w tablicy zawiera pozycje koncowa zajeta przez kierowce w i-tym wyscigu.</p>
      */
     public ArrayList<String> statystykiWynikow=new ArrayList<>();
     /** Przechowuje statystyki wyprzedzen w sezonie
+     * <p>Kazdy i-ty element w tablicy zawiera laczna ilosc wyprzedzen dokonanych przez kierowce w i-tym wyscigu.</p>
+     * @see Main#wyprzedzanie(int)
      */
     public ArrayList<Integer> statystykiWyprzedzenia=new ArrayList<>();
     /** Przechowuje ilosc punktow w sezonie

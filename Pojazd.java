@@ -8,19 +8,25 @@ public class Pojazd implements Ulepszenie {
     /** Przechowuje nazwe pojazdu
      */
     public String nazwa;
-    /** Przechowuje mechanika, ktory wykonuje serwis pojazdu podczas pitstopu
+    /** Przechowuje obiekt typu {@link Mechanik}, ktory wykonuje serwis pojazdu podczas pitstopu
      */
     public Mechanik mechanik;
-    /** Przechowuje wartosc, ktora wplywa na czas osiagany na odcinkach prostych
+    /** Przechowuje wartosc, ktora wplywa na czas osiagany na odcinkach prostych.
+     * @see Main#przejazdKierowcy(Kierowca, Tor, double)
      */
     public double szybkosc;
     /** Przechowuje wartosc, ktora wplywa na czas osiagany na zakretach oraz na szybkosc zuzuwania opon
+     * @see Main#przejazdKierowcy(Kierowca, Tor, double)
      */
     public double przyczepnosc;
-    /** Przechowuje ilosc paliwa podczas wyscigu
+    /** Przechowuje ilosc paliwa podczas wyscigu.
+     * <p>Wartoscia domyslna i maksymalna jest {@link Main#wymaganaPojemnoscPaliwa}, natomiast pojazd zmuszony jest do serwisu gdy wartosc spadnie ponizej <code>5</code>.</p>
+     * @see Main#pitstop(Kierowca)
      */
     public double stanPaliwa;
-    /** Przechowuje wartosc, ktora okresla stopien zuzycia opon podczas wyscigu
+    /** Przechowuje wartosc, ktora okresla stopien zuzycia opon podczas wyscigu.
+     * <p>Wartoscia domyslna i maksymalna jest <code>100</code>, natomiast pojazd zmuszony jest do serwisu gdy wartosc spadnie ponizej <code>10</code>.</p>
+     * @see Main#pitstop(Kierowca) 
      */
     public double stanOpon;
 
@@ -32,6 +38,7 @@ public class Pojazd implements Ulepszenie {
      *            <li>{@link #przyczepnosc}</li>
      *  </ul>
      * @param wartosc double zawieracy wartosc ulepszenia
+     * @see Main#ulepszenia()
      */
     @Override
     public void ulepszStatystyki(double wartosc) {

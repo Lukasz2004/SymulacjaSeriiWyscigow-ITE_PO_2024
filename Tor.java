@@ -1,7 +1,8 @@
 import java.util.List;
 import java.util.Random;
-/** Ta klasa zawiera informacje dotyczace toru.
+/** Ta klasa zawiera informacje dotyczace toru. Wszystkie jej parametry wplywaja na czasy przejazdu kierowcow.
  * <p>Posiada konstrukor i metode losujaca warunki pogodowe</p>
+ * @see Main#przejazdKierowcy(Kierowca, Tor, double)
  */
 public class Tor {
     /** Przechowuje nazwe toru, uzywana w celach wizualnych i indentyfikacyjnych
@@ -19,7 +20,7 @@ public class Tor {
     /** Przechowuje procentowa szanse na deszcz, ktory wplywa na osiagany czas przejadu
      */
     private double szansaNaDeszcz;
-    /** Przechowuje informacje losowana w metodzie {@link #warunkiPogodowe()} czy na torze pada deszcz czy nie
+    /** Przechowuje informacje losowana w metodzie {@link #warunkiPogodowe()} czy na torze pada deszcz czy nie. Wplywa znaczaco na osiagi kierowcow.
      */
     public boolean czyPada;
 

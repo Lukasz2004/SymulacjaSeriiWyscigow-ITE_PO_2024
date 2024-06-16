@@ -50,7 +50,10 @@ public class Main {
     private static ArrayList<Tor> listaTorow = new ArrayList<>();
 
 
-
+    /**
+     * Glowna metoda calego programu. Wywoluje caly proces zaladowania danych, odegrania serii wyscigow oraz zapisania danych.
+     * @param args
+     */
     public static void main(String[] args) {
         ObslugaPlikow.wczytajDane();
         for(int nrWyscigu=1; nrWyscigu<=listaTorow.size(); nrWyscigu++)
@@ -133,7 +136,15 @@ public class Main {
         }
     }
 
-    //Oblicza czas przejazdu kolejnego okrazenia dla podanego kierowcy
+    /**
+     * Metoda do obliczania i aktualizacji pola czasu przejazdu pojedynczego okrazenia dla podanego kierowcy na podanym torze.
+     * <p>Uwzglednia Ona wartosc losowa, rozne parametry kierowcow oraz wywoluje {@link #pitstop(Kierowca)} by sprawdzic koniecznosc pitstopu.</p>
+     * <p>Czas przejazdu jest zablokowany tak aby nie mogl wynosic mniej niz <code>CzasPoprzednika</code>. </p>
+     * @param kierowca Kierowca ktorego czas przejazdu jest obliczany
+     * @param tor Tor na ktorym odbywa sie obliczane okrazenie
+     * @param CzasPoprzednika {@link Kierowca#czasPrzejazdu} kierowcy znajdujacego sie na wyzszej pozycji w wyscigu. Obliczony w tej
+     * funkcji czas przejazdu bedzie zawsze wiekszy badz zrownany do tej wartosci.
+     */
     private static void przejazdKierowcy(Kierowca kierowca, Tor tor, double CzasPoprzednika)
     {
         if(kierowca.czyEliminacja) return;
@@ -156,7 +167,6 @@ public class Main {
         kierowca.statystykiOkrazenia.add(kierowca.czasPrzejazdu);
     }
 
-    //Oblicza czas pitstopu kierowcy
     /** Metoda obliczajaca czas jaki kierowca spedzil w pitstopie
      * <p>Kiedy kierowca zjezdza do pitstopu sprawdzany jest {@link Pojazd#stanPaliwa} oraz {@link Pojazd#stanOpon}</p>
      * <p>Jezeli stan jest za maly to czas w pitstopie jest zwiekszany o zmienna losowa modyfikowana przez {@link Mechanik#szybkosc} oraz uzupelniany jest stan</p>
@@ -169,7 +179,7 @@ public class Main {
         if(kierowca.pojazd.stanPaliwa < 12.5)
         {
             czasPitstopu += (czas.nextDouble() * kierowca.pojazd.mechanik.szybkosc);
-            kierowca.pojazd.stanPaliwa = 50;
+            kierowca.pojazd.stanPaliwa = wymaganaPojemnoscPaliwa;
         }
         if(kierowca.pojazd.stanOpon < 25)
         {
@@ -181,11 +191,16 @@ public class Main {
     }
 
     //Oblicza mozliwosc i rezultat wyprzedzania miedzy sasiadujaca para kierowcow
-    /** Metoda sprawdzajaca mozliwosc wyprzedzenia, eliminacji oraz dokonujaca zamiany kolejnosci kierowcow w liscie
-     * <p>W celu kontroli mozliwosci wyprzedzenia sprawdzane sa :</p>
+    /** Metoda sprawdzajaca mozliwosc interakcji miedzy kierowcami, wyprzedzenia badz eliminacji, oraz dokonujaca zamiany kolejnosci kierowcow w liscie
+     * <p>W tej metodzie sprawdzana i dokonywana jest interakcja miedzy dwoma kierowcami:</p>
      * <ul>
-     *     <li>{@link Kierowca#czyEliminacja}</li>
-     *     <li>{@link Kierowca#czyWPitstopie}</li>
+     *     <li>{@link #listaKierowcow listakierowcow[pozKierowcy-1]} zwany <code> kierowca1</code> czyli kierowca ktory moze zostac wyprzedzony</li>
+     *     <li>{@link #listaKierowcow listakierowcow[pozKierowcy]} zwany <code> kierowca2</code> czyli kierowca ktory moze dokonac wyprzedzenia</li>
+     * </ul>
+     * <p>W celu kontroli mozliwosci wyprzedzenia sprawdzane sa kryteria niezbedne:</p>
+     * <ul>
+     *     <li>{@link Kierowca#czyEliminacja kierowca2.czyEliminacja} == false </li>
+     *     <li>{@link Kierowca#czyWPitstopie} == false</li>
      *     <li>{@link Kierowca#czasPrzejazdu}</li>
      * </ul>
      *<p>W celu sprawdzenia czy wyprzedzenie sie udalo porownywane sa</p>
@@ -202,7 +217,7 @@ public class Main {
      *           <li>{@link Main#globalnaAgresywnosc}</li>
      *           <li>Losowa zmienna</li>
      * </ul>
-     * <p>Kiedy wyprzedzanie sie udalo nastepuje zamiana pozycji kierowcow w liscie i czasow oraz zmiana {@link Kierowca#statystykiWyprzedzenia}</p>
+     * <p>Kiedy wyprzedzanie sie udalo nastepuje zamiana pozycji kierowcy1 i kierowcy2 w liscie oraz ich {@link Kierowca#czasPrzejazdu}. Udane wyprzedzanie jest rowniez odnotowane w {@link Kierowca#statystykiWyprzedzenia kierowca2.statystykiWyprzedzenia} </p>
      * <p>Kierowca moze wtedy rozpoczac kolejne wyprzedzenie poprzez ponowne wywolanie metody</p>
      * <p>Jezeli wyprzedzanie sie nie udalo losowa wartosc jest porownywana z:
      * <ul>
@@ -213,6 +228,7 @@ public class Main {
      * <p>W celu sprawdzenia czy nastapila awaria wyprzedzajacego lub zderzenie obu pojazdow</p>
      * <p>Jezeli jedno z powyzszych nastapilo kierowca lub kierowcy zostaja wyeliminowani oraz trafiaja na koniec listy</p>
      * @param pozKierowcy Pozycja kierowcy, ktory zaczyna wyprzedzanie
+     * @see #globalnaAgresywnosc
      */
     private static void wyprzedzanie(int pozKierowcy)
     {
