@@ -57,7 +57,7 @@ public class Pojazd implements Ulepszenie {
 
     }
     /** Konstruktor kopiujacy
-     *  @param p Pojazd, od ktorego kopiowane sa wartosci dla nowego pojazdu dla drugiego kierowcy z druzyny
+     *  @param p Pojazd, od ktorego kopiowane sa wartosci dla tworzonego nowego pojazdu
      */
     public Pojazd (Pojazd p)
     {
