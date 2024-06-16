@@ -5,13 +5,15 @@ Program przeprowadzi symulacje kilku wyścigów samochodowych, jeden po drugim, 
 
 
 
-Programowanie Obiektowe - ITE - Semestr letni 2023/2024
+Programowanie Obiektowe - ITE - Politechnika Wrocławska - Semestr letni 2023/2024
 
 ## Autorzy
 
 - Łukasz Czerwiński - Lider grupy
 - Kamil Jasyk
 
+## Uwagi
+Program do uruchomienia wymaga posiadania folderu „Wyniki” w katalogu głównym projektu (zawierającym wszystkie klasy), oraz wymaga zapewnienia wszystkich plików .csv potrzebnych do inicjalizacji klas.
 
 ## Wersja środowiska:
 IntelliJ IDEA 2024.1.2 (Ultimate Edition)
