@@ -171,19 +171,36 @@ public class Main {
 
     //Oblicza mozliwosc i rezultat wyprzedzania miedzy sasiadujaca para kierowcow
     /** Metoda sprawdzajaca mozliwosc wyprzedzenia, eliminacji oraz dokonujaca zamiany kolejnosci kierowcow w liscie
-     * <p>Sprawdzane sa {@link Kierowca#czyEliminacja}, {@link Kierowca#czyWPitstopie} drugiego kierowcy oraz czas jaki dzieli kierowcow od siebie</p>
-     * <p>Jezeli ktorys z warunkow uniemozliwia wyprzedzenie to zostaje ono przerwane</p>
-     * <p>Sprawdzane jest czy pierwszy kierowca znajduje sie w pitstopie i czy mozliwe jest natychmiastowe wyprzedzenie</p>
-     * <p>Jezeli mozliwe jest natychmiastowe wyprzedzenie lub </p>
-     * <p>parametr wyprzedznia drugiego kierowcy skaladajacy sie z {@link Kierowca#umiejetnoscWyprzedania}, {@link Kierowca#agresywnosc}, {@link Main#globalnaAgresywnosc} i losowej zmiennej jest wiekszy od </p>
-     * <p>parametru obrony pierwszego kierowcu skaladajacy sie z {@link Kierowca#umiejetnoscObrony}, {@link Kierowca#agresywnosc}, {@link Main#globalnaAgresywnosc} i losowej zmiennej</p>
-     * <p>Nastepuje wyprzedzanie, zamiana pozycji kierowcow w liscie i czasow oraz zmiana {@link Kierowca#statystykiWyprzedzenia}</p>
+     * <p>W celu kontroli mozliwosci wyprzedzenia sprawdzane sa :</p>
+     * <ul>
+     *     <li>{@link Kierowca#czyEliminacja}</li>
+     *     <li>{@link Kierowca#czyWPitstopie}</li>
+     *     <li>{@link Kierowca#czasPrzejazdu}</li>
+     * </ul>
+     *<p>W celu sprawdzenia czy wyprzedzenie sie udalo porownywane sa</p>
+     * <ul>
+     *           <li>{@link Kierowca#umiejetnoscWyprzedania}</li>
+     *           <li>{@link Kierowca#agresywnosc}</li>
+     *           <li>{@link Main#globalnaAgresywnosc}</li>
+     *           <li>Losowa zmienna</li>
+     * </ul>
+     * oraz
+     * <ul>
+     *           <li>{@link Kierowca#umiejetnoscObrony}</li>
+     *           <li>{@link Kierowca#agresywnosc}</li>
+     *           <li>{@link Main#globalnaAgresywnosc}</li>
+     *           <li>Losowa zmienna</li>
+     * </ul>
+     * <p>Kiedy wyprzedzanie sie udalo nastepuje zamiana pozycji kierowcow w liscie i czasow oraz zmiana {@link Kierowca#statystykiWyprzedzenia}</p>
      * <p>Kierowca moze wtedy rozpoczac kolejne wyprzedzenie poprzez ponowne wywolanie metody</p>
-     * <p>Jezeli wyprzedzanie sie nie udalo losowa wartosc jest porownywana z parametrem skladajacym sie z {@link Kierowca#umiejetnoscWyprzedania}, {@link Kierowca#agresywnosc}, {@link Main#globalnaAgresywnosc}</p>
-     * <p>Kiedy parametr jest wiekszy od wartosci losowej to drugi kierowca zostaje wyeliminowany oraz trafia na koniec listy, zmienna {@link Kierowca#czasPrzejazdu} zostaje ustawiona na -1 </p>
-     * <p>Jezeli drugi kierowca zostal wyeliminowany sprawdzane jest {@link Kierowca#czyWPitstopie} pierwszego kierowcy oraz </p>
-     * <p>wartosc losowa porownywana jest z parametrem skladajacym sie z {@link Kierowca#umiejetnoscObrony}, {@link Kierowca#agresywnosc}, {@link Main#globalnaAgresywnosc}</p>
-     * <p>Kiedu parametr jest wiekszy od wartosci losowej to pierwszy kierowca zostaje wyeliminowany oraz trafia na koniec listy, zmienna {@link Kierowca#czasPrzejazdu} zostaje ustawiona na -1 </p>
+     * <p>Jezeli wyprzedzanie sie nie udalo losowa wartosc jest porownywana z:
+     * <ul>
+     *     <li>{@link Kierowca#umiejetnoscWyprzedania} lub {@link Kierowca#umiejetnoscObrony}</li>
+     *     <li>{@link Kierowca#agresywnosc}</li>
+     *     <li>{@link Main#globalnaAgresywnosc}</li>
+     * </ul>
+     * <p>W celu sprawdzenia czy nastapila awaria wyprzedzajacego lub zderzenie obu pojazdow</p>
+     * <p>Jezeli jedno z powyzszych nastapilo kierowca lub kierowcy zostaja wyeliminowani oraz trafiaja na koniec listy</p>
      * @param pozKierowcy Pozycja kierowcy, ktory zaczyna wyprzedzanie
      */
     private static void wyprzedzanie(int pozKierowcy)

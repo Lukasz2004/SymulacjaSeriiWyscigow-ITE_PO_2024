@@ -10,7 +10,7 @@ public class Mechanik extends Personel implements Ulepszenie{
     public double szybkosc;
 
     //Dokonuje ulepszen parametrow pomiedzy wyscigami
-    /** Metoda ulepsza jedna statystyke o podana wartosc
+    /** Metoda ulepsza {@link #szybkosc} o podana wartosc
      * @param wartosc double zawieracy wartosc ulepszenia
      */
     @Override

@@ -26,7 +26,11 @@ public class Pojazd implements Ulepszenie {
 
     //Dokonuje ulepszen parametrow pomiedzy wyscigami
     /** Metoda ulepsza jedna statystyke o podana wartosc
-     * <p>Parametr, ktory zostanie ulepszony jest losowany </p>
+     * <p>Parametr, ktory zostanie ulepszony jest losowany z ponizszych: </p>
+     * <ul>
+     *            <li>{@link #szybkosc}</li>
+     *            <li>{@link #przyczepnosc}</li>
+     *  </ul>
      * @param wartosc double zawieracy wartosc ulepszenia
      */
     @Override

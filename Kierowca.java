@@ -57,7 +57,16 @@ public class Kierowca extends Personel implements Ulepszenie {
 
     //Dokonuje ulepszen parametrow pomiedzy wyscigami
     /** Metoda ulepsza jedna statystyke o podana wartosc
-     * <p>Parametr, ktory zostanie ulepszony jest losowany </p>
+     * <p>Parametr, ktory zostanie ulepszony jest losowany z ponizszych: </p>
+     * <ul>
+     *                 <li>{@link #predkoscProsta}</li>
+     *                 <li>{@link #predkoscZakret}</li>
+     *                 <li>{@link #umiejetnoscWyprzedania}</li>
+     *                 <li>{@link #umiejetnoscObrony}</li>
+     *                 <li>{@link #agresywnosc}</li>
+     *                 <li>{@link #adaptacjaPogoda}</li>
+     *                 <li>{@link #ekonomicznoscJazdy}</li>
+     * </ul>
      * @param wartosc double zawieracy wartosc ulepszenia
      */
     @Override

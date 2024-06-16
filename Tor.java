@@ -4,10 +4,10 @@ import java.util.Random;
  * <p>Posiada konstrukor i metode losujaca warunki pogodowe</p>
  */
 public class Tor {
-    /** Przechowuje nazwe toru
+    /** Przechowuje nazwe toru, uzywana w celach wizualnych i indentyfikacyjnych
      */
     public String nazwa;
-    /** Przechowuje dlugosc toru w kilometrach
+    /** Przechowuje dlugosc toru w kilometrach, wykorzystywana do wyliczenia czasow przejazdu
      */
     public double dlugosc;
     /** Przechowuje procentowa wartosc odcinkow prostych na torze
@@ -16,7 +16,7 @@ public class Tor {
     /** Przechowuje procentowa wartosc zakretow na torze
      */
     public double procentZakretow;
-    /** Przechowuje procentowa szanse na deszcz
+    /** Przechowuje procentowa szanse na deszcz, ktory wplywa na osiagany czas przejadu
      */
     private double szansaNaDeszcz;
     /** Przechowuje informacje losowana w metodzie {@link #warunkiPogodowe()} czy na torze pada deszcz czy nie
